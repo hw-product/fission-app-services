@@ -1,0 +1,15 @@
+- content_for(:panel) do
+  = bootstrap_form_tag :url => admin_service_path(@service.id), :method => :put do |f|
+    = f.collection_check_boxes 'product_features[]', @product_features, :id, :name, :id => :name, :checked => @service.product_features, :label => 'Product Features'
+    = f.submit 'Save'
+
+:ruby
+  output = render(
+    :partial => 'layouts/container',
+    :locals => {
+      :panel => {
+        :heading => @service.name.humanize
+      }
+    }
+  )
+= output
