@@ -1,0 +1,37 @@
+= bootstrap_form_tag form_opts.merge(:html => {:id => 'service-group-form'}) do |f|
+  = f.text_field :name, :value => @service_group ? @service_group.name : nil, :disabled => !!@service_group
+  = f.text_field :description, :value => @service_group ? @service_group.description : nil
+  %div.col-md-3.pull-left.service-group-list
+    %div.panel.panel-success
+      %div.panel-heading
+        Group Services
+      %div.panel-body
+        %ul.list-group.bg-success.services-connector#group-services{:style => 'list-style-type: none; min-height: 20px'}
+          - if @service_group
+            - @service_group.services.each do |service|
+              %li.list-group-item{:style => 'background-color: inherit', :service_id => service.id}= service.name
+  %div.col-md-3.service-available-list
+    %div.panel.panel-warning
+      %div.panel-heading
+        Available Services
+      %div.panel-body
+        %ul.list-group.bg-warning.services-connector#all-services{:style => 'list-style-type: none; min-height: 20px'}
+          - @services.each do |service|
+            %li.list-group-item{:style => 'background-color: inherit', :service_id => service.id}= service.name
+  %div.clearfix
+  = f.submit 'Save', :disable_with => 'Saving...'
+
+:javascript
+  $(document).ready(
+    function(){
+      $("#group-services, #all-services").sortable({
+        connectWith: ".services-connector"
+      }).disableSelection();
+      $('#service-group-form').submit(function(event){
+        $('#group-services li').each(function(){
+          console.log('wat: ' + $(this).attr('service_id'));
+          $('#service-group-form').append('<input type="hidden" name="services[]" value="' + $(this).attr('service_id') + '" />');
+        });
+      });
+    }
+  );

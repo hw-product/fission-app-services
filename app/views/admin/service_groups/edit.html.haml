@@ -1,0 +1,22 @@
+:ruby
+  id = 'edit-service-group'
+  content_for(:container) do
+    render(
+      :partial => 'layouts/panel',
+      :locals => {
+        :id => id,
+        :heading => "Edit Service Group - #{@service_group.name}",
+        :panel_content => render(
+          :partial => 'form',
+          :locals => {
+            :form_opts => {
+              :url => admin_service_group_path(@service_group.id),
+              :method => :put
+            }
+          }
+        )
+      }
+    )
+  end
+
+= render(:partial => 'layouts/container', :locals => {:container_class => "#{id}-form", :container_id => id})

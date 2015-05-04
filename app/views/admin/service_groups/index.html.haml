@@ -1,0 +1,26 @@
+- content_for(:heading_title) do
+  %div.pull-right
+    %div.btn.btn-default.btn-sm= link_to('Create', new_admin_service_group_path)
+
+:ruby
+  id = 'service-groups'
+  content_for(:container) do
+    render(
+      :partial => 'layouts/panel',
+      :locals => {
+        :id => id,
+        :heading => ('Service Groups' + yield(:heading_title)).html_safe,
+        :panel_content => render(
+          :partial => 'layouts/table',
+          :locals => {
+            :header_data => ['Service Groups'],
+            :data => @service_groups.map{|service_group|
+              [link_to(service_group.name, edit_admin_service_group_path(service_group.id))]
+            }
+          }
+        )
+      }
+    )
+  end
+
+= render(:partial => 'layouts/container', :locals => {:container_class => "#{id}-service-groups-list", :container_id => id})
