@@ -49,16 +49,22 @@ module FissionApp
       end
 
       # @return [Hash] navigation
-      def fission_navigation(*_)
-        Smash.new(
-          'Admin' => Smash.new(
-            'Services' => Rails.application.routes.url_helpers.admin_services_path,
-            'Service Groups' => Rails.application.routes.url_helpers.admin_service_groups_path
-          ),
-          'Services' => Smash.new(
-            'Custom Services' => Rails.application.routes.url_helpers.custom_services_path
-          )
-        )
+      def fission_navigation(product, current_user)
+        nav = Smash.new
+        if(current_user.run_state.current_account.products.include?(product))
+          case product.internal_name
+          when 'fission'
+            nav['Admin'] = Smash.new(
+              'Services' => Rails.application.routes.url_helpers.admin_services_path,
+              'Service Groups' => Rails.application.routes.url_helpers.admin_service_groups_path
+            )
+          when 'services'
+            nav['Services'] = Smash.new(
+              'Custom Services' => Rails.application.routes.url_helpers.custom_services_path
+            )
+          end
+        end
+        nav
       end
 
     end
