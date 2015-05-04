@@ -1,0 +1,26 @@
+- content_for(:heading_title) do
+  %div.pull-right
+    %div.btn.btn-default.btn-sm= link_to('Create', new_custom_service_path)
+
+:ruby
+  id = 'custom-services'
+  content_for(:container) do
+    render(
+      :partial => 'layouts/panel',
+      :locals => {
+        :id => id,
+        :heading => ('Custom Services' + yield(:heading_title)).html_safe,
+        :panel_content => render(
+          :partial => 'layouts/table',
+          :locals => {
+            :header_data => ["Custom Services for #{@account.name}"],
+            :data => @services.map{|service|
+              [link_to(service.name, edit_custom_service_path(service.id))]
+            }
+          }
+        )
+      }
+    )
+  end
+
+= render(:partial => 'layouts/container', :locals => {:container_class => "#{id}-list", :container_id => id})

@@ -30,7 +30,6 @@
       }).disableSelection();
       $('#service-group-form').submit(function(event){
         $('#group-services li').each(function(){
-          console.log('wat: ' + $(this).attr('service_id'));
           $('#service-group-form').append('<input type="hidden" name="services[]" value="' + $(this).attr('service_id') + '" />');
         });
       });

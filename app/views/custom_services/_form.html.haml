@@ -1,0 +1,5 @@
+= bootstrap_form_tag form_opts.merge(:html => {:id => 'service-group-form'}) do |f|
+  = f.text_field :name, :value => @service ? @service.name : nil, :disabled => !!@service
+  = f.text_field :endpoint, :value => @service ? @service.endpoint : nil
+  = f.check_box :enabled, :checked => @service ? @service.enabled : true
+  = f.submit 'Save', :disable_with => 'Saving...'
