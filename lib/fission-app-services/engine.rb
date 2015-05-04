@@ -25,7 +25,8 @@ module FissionApp
       def fission_navigation(*_)
         Smash.new(
           'Admin' => Smash.new(
-            'Services' => Rails.application.routes.url_helpers.admin_services_path
+            'Services' => Rails.application.routes.url_helpers.admin_services_path,
+            'Service Groups' => Rails.application.routes.url_helpers.admin_service_groups_path
           )
         )
       end
