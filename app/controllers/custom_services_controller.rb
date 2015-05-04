@@ -66,7 +66,7 @@ class CustomServicesController < ApplicationController
       format.html do
         service = CustomService.find_by_id(params[:id])
         if(service)
-          serivce.enabled = !!params[:enabled]
+          service.enabled = !!params[:enabled]
           service.endpoint = params[:endpoint]
           service.save
           flash[:success] = 'New custom service created!'
