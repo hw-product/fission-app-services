@@ -19,6 +19,7 @@
           - @services.each do |service|
             %li.list-group-item{:style => 'background-color: inherit', :service_id => service.id}= service.name
   %div.clearfix
+  = f.collection_check_boxes 'product_features[]', @product_features, :id, :name, :id => :name, :checked => @service_group.product_features, :label => 'Product Features'
   = f.submit 'Save', :disable_with => 'Saving...'
 
 :javascript
