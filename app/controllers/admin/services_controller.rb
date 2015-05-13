@@ -21,7 +21,9 @@ class Admin::ServicesController < ApplicationController
       format.html do
         @service = Service.find_by_id(params[:id])
         if(@service)
-          @product_features = ProductFeature.order(:name).all
+          @products = Product.order(:name).eager_graph(:product_features).all.find_all do |prod|
+            !prod.product_features.empty?
+          end
         else
           flash[:error] = 'Failed to locate requested service!'
           redirect_to admin_services_path
@@ -43,6 +45,11 @@ class Admin::ServicesController < ApplicationController
           unless(@service.product_features.include?(pf))
             @service.add_product_feature(pf)
           end
+        end
+        price_value = params[:price].to_i * 100
+        unless(@service.price.cost == price_value)
+          @service.price.cost = price_value
+          @service.price.save
         end
         flash[:success] = 'Service updated!'
         redirect_to admin_services_path

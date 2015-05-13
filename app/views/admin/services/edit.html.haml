@@ -1,15 +1,63 @@
 - content_for(:panel) do
-  = bootstrap_form_tag :url => admin_service_path(@service.id), :method => :put do |f|
-    = f.collection_check_boxes 'product_features[]', @product_features, :id, :name, :id => :name, :checked => @service.product_features, :label => 'Product Features'
-    = f.submit 'Save'
+  = bootstrap_form_tag :url => admin_service_path(@service.id), :method => :put, :html => {:id => 'feature-form'} do |f|
+    - if engine?(:stripe)
+      = f.text_field :price, :prepend => '$', :append => '.00', :value => @service.price.cost > 0 ? @service.price.cost / 100 : nil
+    .panel.panel-default
+      .panel-heading
+        Enable for product features
+      %table.table.product-features
+        - @products.each do |product|
+          %thead
+            %tr
+              %th= product.name
+          %tbody
+            - product.product_features_dataset.order(:name).each do |feature|
+              %tr
+                %td{:class => @service.product_features.include?(feature) ? 'success' : 'text-danger', 'feature-id' => feature.id, 'feature-active' => @service.product_features.include?(feature).to_s}= feature.name.humanize
+    = f.submit 'Save', :class => 'btn btn-success pull-right', :id => 'feature-form-submit'
 
 :ruby
   output = render(
     :partial => 'layouts/container',
     :locals => {
       :panel => {
-        :heading => @service.name.humanize
+        :heading => "#{@service.name.humanize} Service"
       }
     }
   )
+
 = output
+
+:javascript
+  $(document).ready(
+    function(){
+      $('.product-features td').hover(
+        function(){
+          $(this).filter('td[feature-active=true]').removeClass('success').addClass('danger');
+          $(this).filter('td[feature-active=false]').removeClass('text-danger').addClass('active').addClass('text-success');
+          $(this).css('cursor', 'pointer');
+        },
+        function(){
+          $(this).filter('td[feature-active=true]').removeClass('danger').addClass('success');
+          $(this).filter('td[feature-active=false]').removeClass('text-success').removeClass('active').addClass('text-danger');
+          $(this).css('cursor', 'default');
+        }
+      );
+      $('.product-features td').click(
+        function(){
+          if($(this).attr('feature-active') == 'true'){
+            $(this).attr('feature-active', 'false').removeClass('success').removeClass('danger').addClass('text-danger');
+          }
+          else {
+            $(this).attr('feature-active', 'true').addClass('success').removeClass('text-danger').removeClass('text-success');
+          }
+        }
+      );
+      $('#feature-form').submit(function(event){
+        $('#feature-form-submit').val('Saving...').attr('disabled', 'disabled');
+        $('.product-features td[feature-active=true]').each(function(idx, item){
+          $('#feature-form').append('<input type="hidden" name="product_features[]" value="' + $(item).attr('feature-id') + '" />');
+        });
+      });
+    }
+  );
