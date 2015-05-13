@@ -1,7 +1,7 @@
 - content_for(:panel) do
   = bootstrap_form_tag :url => admin_service_path(@service.id), :method => :put, :html => {:id => 'feature-form'} do |f|
     - if engine?(:stripe)
-      = f.text_field :price, :prepend => '$', :append => '.00', :value => @service.price.cost > 0 ? @service.price.cost / 100 : nil
+      = f.text_field :price, :prepend => '$', :append => '.00', :value => @service.cost > 0 ? @service.cost : nil
     .panel.panel-default
       .panel-heading
         Enable for product features
