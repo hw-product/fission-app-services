@@ -47,9 +47,8 @@ class Admin::ServicesController < ApplicationController
           end
         end
         price_value = params[:price].to_i * 100
-        unless(@service.price.cost == price_value)
-          @service.price.cost = price_value
-          @service.price.save
+        unless(@service.cost == params[:price])
+          @service.price = params[:price]
         end
         flash[:success] = 'Service updated!'
         redirect_to admin_services_path

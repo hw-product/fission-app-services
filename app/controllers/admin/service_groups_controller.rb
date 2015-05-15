@@ -20,7 +20,7 @@ class Admin::ServiceGroupsController < ApplicationController
       end
       format.html do
         @services = Service.order(:name).all
-        @product_features = ProductFeature.order(:name).all
+        @products = Product.order(:name).all
       end
     end
   end
@@ -44,6 +44,7 @@ class Admin::ServiceGroupsController < ApplicationController
             :service => srv
           )
         end
+        group.price = params[:price].to_i
         group.remove_all_product_features
         ProductFeature.where(:id => params[:product_features]).all.each do |pf|
           unless(group.product_features.include?(pf))
@@ -67,7 +68,7 @@ class Admin::ServiceGroupsController < ApplicationController
         @service_group = ServiceGroup.find_by_id(params[:id])
         if(@service_group)
           @services = Service.order(:name).all - @service_group.services
-          @product_features = ProductFeature.order(:name).all
+          @products = Product.order(:name).all
         else
           flash[:error] = 'Failed to locate requested group'
           redirect_to admin_service_groups_path
@@ -94,13 +95,13 @@ class Admin::ServiceGroupsController < ApplicationController
               :service => srv
             )
           end
+          @service_group.price = params[:price].to_i
           @service_group.remove_all_product_features
           ProductFeature.where(:id => params[:product_features]).all.each do |pf|
             unless(@service_group.product_features.include?(pf))
               @service_group.add_product_feature(pf)
             end
           end
-
           flash[:success] = 'Group updated!'
           redirect_to admin_service_groups_path
         else

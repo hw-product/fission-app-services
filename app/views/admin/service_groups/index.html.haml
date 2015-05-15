@@ -1,6 +1,7 @@
 - content_for(:heading_title) do
-  %div.pull-right
-    %div.btn.btn-default.btn-sm= link_to('Create', new_admin_service_group_path)
+  Service Groups
+  = link_to('Create', new_admin_service_group_path, :class => 'btn btn-success btn-sm pull-right')
+  .clearfix
 
 :ruby
   id = 'service-groups'
@@ -9,7 +10,7 @@
       :partial => 'layouts/panel',
       :locals => {
         :id => id,
-        :heading => ('Service Groups' + yield(:heading_title)).html_safe,
+        :heading => yield(:heading_title),
         :panel_content => render(
           :partial => 'layouts/table',
           :locals => {
