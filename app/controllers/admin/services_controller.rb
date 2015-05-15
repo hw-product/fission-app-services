@@ -46,9 +46,8 @@ class Admin::ServicesController < ApplicationController
             @service.add_product_feature(pf)
           end
         end
-        price_value = params[:price].to_i * 100
         unless(@service.cost == params[:price])
-          @service.price = params[:price]
+          @service.price = params[:price].to_i
         end
         flash[:success] = 'Service updated!'
         redirect_to admin_services_path
