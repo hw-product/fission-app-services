@@ -51,7 +51,7 @@ class Admin::ServiceGroupsController < ApplicationController
             group.add_product_feature(pf)
           end
         end
-
+        save_filters(group)
         flash[:success] = 'New group created!'
         redirect_to admin_service_groups_path
       end
@@ -102,6 +102,7 @@ class Admin::ServiceGroupsController < ApplicationController
               @service_group.add_product_feature(pf)
             end
           end
+          save_filters(@service_group)
           flash[:success] = 'Group updated!'
           redirect_to admin_service_groups_path
         else
@@ -133,5 +134,105 @@ class Admin::ServiceGroupsController < ApplicationController
       end
     end
   end
+
+  # route filters
+
+  def add_filter_rule
+    respond_to do |format|
+      format.js do
+        @rule = PayloadMatchRule.find_by_id(params[:rule])
+        @identifier = params[:identifier]
+      end
+      format.html do
+        flash[:error] = 'Unsupported request!'
+        redirect_to dashboard_path
+      end
+    end
+  end
+
+  def apply_filter_rule
+    respond_to do |format|
+      format.js do
+        @rule = PayloadMatchRule.find_by_id(params[:rule_id])
+        @identifier = params[:identifier]
+        @value = params[:value]
+      end
+      format.html do
+        flash[:error] = 'Unsupported request!'
+        redirect_to dashboard_path
+      end
+    end
+  end
+
+  def remove_filter_rule
+    respond_to do |format|
+      format.js do
+        @rule_ident = params[:rule_ident]
+      end
+      format.html do
+        flash[:error] = 'Unsupported request!'
+        redirect_to dashboard_path
+      end
+    end
+  end
+
+  def add_filter
+    respond_to do |format|
+      format.js do
+        @match_rules = PayloadMatchRule.order(:name).all
+      end
+      format.html do
+        flash[:error] = 'Unsupported request!'
+        redirect_to dashboard_path
+      end
+    end
+  end
+
+  def remove_filter
+    respond_to do |format|
+      format.js do
+        @ident = params[:ident]
+      end
+      format.html do
+        flash[:error] = 'Unsupported request!'
+        redirect_to dashboard_path
+      end
+    end
+  end
+
+  def save_filters(service_group)
+    sg_filter_ids = params.fetch('filters', {}).map do |ident, filter|
+      sg_filter = ServiceGroupPayloadFilter.find_or_create(
+        :name => filter[:name],
+        :description => filter[:description],
+        :service_group_id => service_group.id
+      )
+      if(filter)
+        current_matchers = sg_filter.payload_matchers.dup
+        filter.fetch(:rule_id, {}).each do |r_idx, r_pair|
+          matcher = PayloadMatcher.find_or_create(
+            :payload_match_rule_id => r_pair.keys.first,
+            :account_id => @account.id,
+            :value => r_pair.values.first
+          )
+          if(current_matchers.include?(matcher))
+            current_matchers.delete(matcher)
+          else
+            sg_filter.add_payload_matcher(matcher)
+          end
+        end
+        current_matchers.each do |stale_matcher|
+          sg_filter.remove_payload_matcher(stale_matcher)
+        end
+      end
+      sg_filter.id
+    end
+    service_group.service_group_filters.find_all do |filter|
+      unless(sg_filter_ids.include?(filter.id))
+        filter.destroy
+      end
+    end
+  end
+
 
 end

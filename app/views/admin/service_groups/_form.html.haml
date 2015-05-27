@@ -32,7 +32,14 @@
           - product.product_features_dataset.order(:name).each do |feature|
             %tr
               %td{:class => @service_group && @service_group.product_features.include?(feature) ? 'success' : 'text-danger', 'feature-id' => feature.id, 'feature-active' => @service_group && @service_group.product_features.include?(feature).to_s}= feature.name.humanize
-  = f.submit 'Save', :disable_with => 'Saving...', :class => 'btn btn-success pull-right'
+  #route-payload-filter
+    - if @service_group
+      - @service_group.service_group_payload_filters.each do |s_filter|
+        = render :partial => 'service_group_filter', :locals => {:filter => s_filter, :rules => @match_rules}
+    = link_to 'Add Filter', add_filter_admin_service_groups_path, :class => 'btn btn-primary pull-right', :role => 'button', :remote => true, :id => 'filter-adder'
+  .clearfix
+  %br
+  = f.submit 'Save', :disable_with => 'Saving...', :class => 'btn btn-success'
 
 :javascript
   $(document).ready(
@@ -71,6 +78,20 @@
         $('.product-features td[feature-active=true]').each(function(idx, item){
           $('#service-group-form').append('<input type="hidden" name="product_features[]" value="' + $(item).attr('feature-id') + '" />');
         });
+        $('#service-group-form .service-group-filter').each(
+          function(idx, item){
+            filter_id = item.id
+            filter_elm = $(item);
+            filter_name = 'filters[' + filter_id + ']';
+            $('#route-form').append('<input type="hidden" name="' + filter_name + '[name]" value="' + $('#' + filter_id + '-name').val() + '" />');
+            $('#route-form').append('<input type="hidden" name="' + filter_name + '[description]" value="' + $('#' + filter_id + '-description').val() + '" />');
+            filter_elm.find('.filter-rule').each(
+              function(r_idx, r_item){
+                $('#route-form').append('<input type="hidden" name="' + filter_name + '[rule_id][' + r_idx + '][' + $(r_item).attr('rule_id') + ']" value="' + $(r_item).attr('rule_value') + '" />');
+              }
+            );
+          }
+        );
       });
     }
   );

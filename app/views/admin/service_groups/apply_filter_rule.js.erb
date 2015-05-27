@@ -1,0 +1,14 @@
+<%
+content = render(
+  :partial => 'rule',
+  :locals => {
+    :name => @rule.name,
+    :value => @value,
+    :removal_link_method => :remove_filter_rule_admin_service_groups_path,
+    :rule_type => 'filter'
+  }
+)
+%>
+$('#rules-<%= @identifier -%>').append("<%= escape_javascript(content) -%>");
+sparkle_ui.display.highlight($('#rules-<%= @identifier -%>').parents('.panel').first().attr('id'), 'success');
+<%= close_window('filter_rule') %>
