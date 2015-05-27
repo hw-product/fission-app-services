@@ -83,11 +83,11 @@
             filter_id = item.id
             filter_elm = $(item);
             filter_name = 'filters[' + filter_id + ']';
-            $('#route-form').append('<input type="hidden" name="' + filter_name + '[name]" value="' + $('#' + filter_id + '-name').val() + '" />');
-            $('#route-form').append('<input type="hidden" name="' + filter_name + '[description]" value="' + $('#' + filter_id + '-description').val() + '" />');
+            $('#service-group-form').append('<input type="hidden" name="' + filter_name + '[name]" value="' + $('#' + filter_id + '-name').val() + '" />');
+            $('#service-group-form').append('<input type="hidden" name="' + filter_name + '[description]" value="' + $('#' + filter_id + '-description').val() + '" />');
             filter_elm.find('.filter-rule').each(
               function(r_idx, r_item){
-                $('#route-form').append('<input type="hidden" name="' + filter_name + '[rule_id][' + r_idx + '][' + $(r_item).attr('rule_id') + ']" value="' + $(r_item).attr('rule_value') + '" />');
+                $('#service-group-form').append('<input type="hidden" name="' + filter_name + '[rule_id][' + r_idx + '][' + $(r_item).attr('rule_id') + ']" value="' + $(r_item).attr('rule_value') + '" />');
               }
             );
           }

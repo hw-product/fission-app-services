@@ -69,6 +69,7 @@ class Admin::ServiceGroupsController < ApplicationController
         if(@service_group)
           @services = Service.order(:name).all - @service_group.services
           @products = Product.order(:name).all
+          @match_rules = PayloadMatchRule.order(:name).all
         else
           flash[:error] = 'Failed to locate requested group'
           redirect_to admin_service_groups_path
@@ -227,7 +228,7 @@ class Admin::ServiceGroupsController < ApplicationController
       end
       sg_filter.id
     end
-    service_group.service_group_filters.find_all do |filter|
+    service_group.service_group_payload_filters.find_all do |filter|
       unless(sg_filter_ids.include?(filter.id))
         filter.destroy
       end
