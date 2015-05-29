@@ -1,0 +1,22 @@
+:ruby
+  id = 'new-account-config'
+  content_for(:container) do
+    render(
+      :partial => 'layouts/panel',
+      :locals => {
+        :id => id,
+        :heading => 'New Account Config ',
+        :panel_content => render(
+          :partial => 'form',
+          :locals => {
+            :form_opts => {
+              :url => configs_path,
+              :method => :post
+            }
+          }
+        )
+      }
+    )
+  end
+
+= render(:partial => 'layouts/container', :locals => {:container_class => "#{id}-form", :container_id => id})

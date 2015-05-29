@@ -1,0 +1,27 @@
+- content_for(:heading) do
+  Account Configurations
+  = link_to('Create', new_config_path, :class => 'btn btn-success pull-right')
+  .clearfix
+
+:ruby
+  id = 'account-config'
+  content_for(:container) do
+    render(
+      :partial => 'layouts/panel',
+      :locals => {
+        :id => id,
+        :heading => yield(:heading),
+        :panel_content => render(
+          :partial => 'layouts/table',
+          :locals => {
+            :header_data => ['Defined configuration packs'],
+            :data => @configs.map{|config|
+              [link_to(config.name, edit_config_path(config.id))]
+            }
+          }
+        )
+      }
+    )
+  end
+
+= render(:partial => 'layouts/container', :locals => {:container_class => "#{id}-list", :container_id => id})
