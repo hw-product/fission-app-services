@@ -4,14 +4,13 @@ module FissionApp
 
       config.to_prepare do |config|
 
-        Jackal.service_info.each do |service, info|
+        Jackal.service_info.each do |service_name, info|
           service = Fission::Data::Models::Service.find_or_create(
-            :name => service
+            :name => service_name
           )
-          unless(service.description == info.description)
-            service.description = info.description
-            service.save
-          end
+          service.description = info.description
+          service.category = info.category
+          service.save
         end
 
         product = Fission::Data::Models::Product.find_or_create(
