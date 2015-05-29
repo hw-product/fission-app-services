@@ -4,7 +4,9 @@ Rails.application.routes.draw do
   resources :configs
 
   namespace :admin do
-    resources :services, :only => [:index, :edit, :update]
+    resources :services, :only => [:index, :edit, :update] do
+      resources :configs
+    end
     resources :service_groups do
       collection do
         get :add_filter
