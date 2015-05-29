@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   resources :custom_services
+  resources :configs
 
   namespace :admin do
     resources :services, :only => [:index, :edit, :update]
