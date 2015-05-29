@@ -11,6 +11,27 @@ module FissionApp
           service.description = info.description
           service.category = info.category
           service.save
+
+          info.configuration.each do |config|
+            item = Fission::Data::Models::ServiceConfigItem.where(
+              :service_id => service.id,
+              :name => config.name.to_s
+            ).first
+            # NOTE: We only set enabled when first adding service
+            # config item to the system. Otherwise we may end up
+            # enabling a config item that was explicitly disabled by a
+            # site administrator.
+            unless(item)
+              item = Fission::Data::Models::ServiceConfigItem.find_or_create(
+                :service_id => service.id,
+                :name => config.name.to_s,
+                :enabled => config.public
+              )
+            end
+            item.description = config.description
+            item.type = config.type
+            item.save
+          end
         end
 
         product = Fission::Data::Models::Product.find_or_create(
@@ -23,6 +44,17 @@ module FissionApp
         permission = Fission::Data::Models::Permission.find_or_create(
           :name => 'Custom services access',
           :pattern => '/custom_services.*'
+        )
+        unless(feature.permissions.include?(permission))
+          feature.add_permission(permission)
+        end
+        feature = Fission::Data::Models::ProductFeature.find_or_create(
+          :name => 'Configuration Pack Editor',
+          :product_id => product.id
+        )
+        permission = Fission::Data::Models::Permission.find_or_create(
+          :name => 'Configuration packs editor access',
+          :pattern => '/configs.*'
         )
         unless(feature.permissions.include?(permission))
           feature.add_permission(permission)
@@ -54,7 +86,10 @@ module FissionApp
       # @return [Hash] account navigation
       def fission_account_navigation(product, current_user)
         if(product.internal_name == 'services')
-          Smash.new('Custom Services' => Rails.application.routes.url_helpers.custom_services_path)
+          Smash.new(
+            'Config' => Rails.application.routes.url_helpers.configs_path,
+            'Custom Services' => Rails.application.routes.url_helpers.custom_services_path
+          )
         else
           Smash.new
         end
