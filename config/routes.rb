@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :services, :only => [:index, :edit, :update] do
-      resources :configs
+      resources :configs, :only => [:index, :edit, :update]
     end
     resources :service_groups do
       collection do
