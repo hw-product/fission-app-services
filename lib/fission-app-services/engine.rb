@@ -9,7 +9,7 @@ module FissionApp
             :name => service_name
           )
           service.description = info.description
-          service.category = info.category
+          service.category = info.category.to_s
           service.save
 
           info.configuration.each do |config|
@@ -29,7 +29,7 @@ module FissionApp
               )
             end
             item.description = config.description
-            item.type = config.type
+            item.type = config.type.to_s
             item.save
           end
         end
