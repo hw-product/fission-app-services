@@ -34,9 +34,8 @@ module FissionApp
           end
         end
 
-        product = Fission::Data::Models::Product.find_or_create(
-          :name => 'Services'
-        )
+        FissionApp.init_product(:fission)
+        product = FissionApp.init_product(:services)
         feature = Fission::Data::Models::ProductFeature.find_or_create(
           :name => 'Custom Services',
           :product_id => product.id
