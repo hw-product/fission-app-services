@@ -1,3 +1,16 @@
+- content_for(:heading_title) do
+  = "Edit Account Config: #{@config.name}"
+  :ruby
+    link_opts = Smash.new(
+      'window-rails-ajax' => 'delete',
+      'window-rails-url' => config_path(@config.id),
+      'window-rails-confirm' => "Delete configuration pack: #{@config.name.humanize}?",
+      :class => 'pull-right window-rails'
+    )
+  = link_to(yield(:delete_icon), '#', link_opts)
+  .clearfix
+
+
 :ruby
   id = 'edit-account-config'
   content_for(:container) do
@@ -5,7 +18,7 @@
       :partial => 'layouts/panel',
       :locals => {
         :id => id,
-        :heading => "Edit Account Config: #{@config.name}",
+        :heading => yield(:heading_title),
         :panel_content => render(
           :partial => 'form',
           :locals => {

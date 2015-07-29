@@ -9,9 +9,10 @@
         - srv.service_config_items_dataset.order(:name).all.each do |item|
           - case item.type
           - when 'string', 'number'
-            = f.text_field item.name, :name => "account_config[#{srv.id}][#{item.id}]", :help => @config ? @config.description : nil, :value => @config ? @config.data.get(*item.name.split('__').unshift(srv.name)) : nil
+            = f.text_field item.name, :name => "account_config[#{srv.id}][#{item.id}]", :help => item.description, :value => @config ? @config.data.get(*item.name.split('__').unshift(srv.name)) : nil
           - when 'hash'
-            = f.text_area item.name, :name => "account_config[#{srv.id}][#{item.id}]", :help => @config ? @config.description : nil, :value => @config && @config.data.get(*item.name.split('__').unshift(srv.name)) ? MultiJson.dump(@config.data.get(*item.name.split('__').unshift(srv.name))) : nil, :label => "#{item.name.humanize} (JSON Hash)"
+            = f.text_area item.name, :name => "account_config[#{srv.id}][#{item.id}]", :help => item.description, :value => @config && @config.data.get(*item.name.split('__').unshift(srv.name)) ? MultiJson.dump(@config.data.get(*item.name.split('__').unshift(srv.name))) : nil, :label => "#{item.name.humanize} (JSON Hash)"
           - when 'boolean'
-            = f.check_box item.name, :name => "account_config[#{srv.id}][#{item.id}]", :help => @config ? @config.description : nil, :checked => @config && @config.data.get(*item.name.split('__').unshift(srv.name))
-  = f.submit 'Save', :disable_with => 'Saving...'
+            = f.check_box item.name, :name => "account_config[#{srv.id}][#{item.id}]", :help => item.description, :checked => @config && @config.data.get(*item.name.split('__').unshift(srv.name))
+  = f.submit 'Save', :disable_with => 'Saving...', :class => 'btn btn-success pull-right'
+  .clearfix
