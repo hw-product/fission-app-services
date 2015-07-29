@@ -1,6 +1,24 @@
 - content_for(:heading_title) do
-  %div.pull-right
-    %div.btn.btn-default.btn-sm= link_to('Create', new_custom_service_path)
+  = link_to('Create', new_custom_service_path, :class => 'btn btn-success btn-sm pull-right')
+  .clearfix
+
+- content_for(:help_popup) do
+  For more information on creating and running custom services,
+  please refer to the
+  = link_to('custom services documentation.', docs_page_path(:anchor => 'custom-services'))
+
+- content_for(:footer_content) do
+  :ruby
+    btn_config = {
+      'type' => 'button',
+      'title' => 'Help',
+      'data-toggle' => 'popover',
+      'data-content' => yield(:help_popup),
+      'data-placement' => 'top auto'
+    }
+  %button.btn.btn.btn-default.popper.pull-right{btn_config}
+    %span.glyphicon.glyphicon-question-sign
+  .clearfix
 
 :ruby
   id = 'custom-services'
@@ -10,6 +28,7 @@
       :locals => {
         :id => id,
         :heading => ('Custom Services' + yield(:heading_title)).html_safe,
+        :footer => yield(:footer_content),
         :panel_content => render(
           :partial => 'layouts/table',
           :locals => {

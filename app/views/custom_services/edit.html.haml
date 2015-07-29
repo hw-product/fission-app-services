@@ -1,3 +1,15 @@
+- content_for(:heading_title) do
+  = "Edit Custom Service - #{@service.name}"
+  :ruby
+    link_opts = Smash.new(
+      'window-rails-ajax' => 'delete',
+      'window-rails-url' => custom_service_path(@service.id),
+      'window-rails-confirm' => "Delete custom service: #{@service.name.humanize}?",
+      :class => 'pull-right window-rails'
+    )
+  = link_to(yield(:delete_icon), '#', link_opts)
+  .clearfix
+
 :ruby
   id = 'edit-custom-service'
   content_for(:container) do
@@ -5,7 +17,7 @@
       :partial => 'layouts/panel',
       :locals => {
         :id => id,
-        :heading => "Edit Custom Service - #{@service.name}",
+        :heading => yield(:heading_title),
         :panel_content => render(
           :partial => 'form',
           :locals => {
