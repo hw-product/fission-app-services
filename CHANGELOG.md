@@ -1,3 +1,6 @@
+# v0.1.8
+* [fix] Allow js format on destroy requests
+
 # v0.1.6
 * Use product init helpers on startup
 * Styling cleanup to make buttons and layout consistent
