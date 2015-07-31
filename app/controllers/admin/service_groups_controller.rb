@@ -116,21 +116,20 @@ class Admin::ServiceGroupsController < ApplicationController
 
   def destroy
     respond_to do |format|
+      group = ServiceGroup.find_by_id(params[:id])
+      if(group)
+        if(group.destroy)
+          flash[:success] = 'Group successfully destroyed!'
+        else
+          flash[:error] = 'Failed to destroy group!'
+        end
+      else
+        flash[:error] = 'Failed to locate requested group!'
+      end
       format.js do
-        flash[:error] = 'Unsupported request!'
-        javascript_redirect_to dashboard_path
+        javascript_redirect_to admin_service_groups_path
       end
       format.html do
-        group = ServiceGroup.find_by_id(params[:id])
-        if(group)
-          if(group.destroy)
-            flash[:success] = 'Group successfully destroyed!'
-          else
-            flash[:error] = 'Failed to destroy group!'
-          end
-        else
-          flash[:error] = 'Failed to locate requested group!'
-        end
         redirect_to admin_service_groups_path
       end
     end

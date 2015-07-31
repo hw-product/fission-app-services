@@ -81,23 +81,21 @@ class CustomServicesController < ApplicationController
 
   def destroy
     respond_to do |format|
+      service = CustomService.find_by_id(params[:id])
+      if(service)
+        if(service.destroy)
+          flash[:success] = 'Custom service successfully destroyed!'
+        else
+          flash[:error] = 'Failed to destroy custom service!'
+        end
+      else
+        flash[:error] = 'Failed to locate requested custom service!'
+      end
       format.js do
-        flash[:error] = 'Unsupported request!'
-        javascript_redirect_to dashboard_path
+        javascript_redirect_to custom_services_path
       end
       format.html do
-        service = CustomService.find_by_id(params[:id])
-        if(service)
-          if(service.destroy)
-            flash[:success] = 'Custom service successfully destroyed!'
-          else
-            flash[:error] = 'Failed to destroy custom service!'
-          end
-          redirect_to custom_services_path
-        else
-          flash[:error] = 'Failed to locate requested custom service!'
-          redirect_to custom_services_path
-        end
+        redirect_to custom_services_path
       end
     end
   end
