@@ -112,19 +112,18 @@ class ConfigsController < ApplicationController
 
   def destroy
     respond_to do |format|
+      account_config = @account.account_configs_dataset.where(:id => params[:id]).first
+      if(account_config)
+        account_config.destroy
+        flash[:success] = 'Configuration pack destroyed!'
+      else
+        flash[:error] = 'Failed to located requested configuration pack!'
+      end
       format.js do
-        flash[:error] = 'Unsupported request!'
-        javascript_redirect_to dashboard_url
+        javascript_redirect_to configs_path
       end
       format.html do
-        account_config = @account.account_configs_dataset.where(:id => params[:id]).first
-        if(account_config)
-          account_config.destroy
-          flash[:success] = 'Configuration pack destroyed!'
-        else
-          flash[:error] = 'Failed to located requested configuration pack!'
-          redirect_to configs_path
-        end
+        redirect_to configs_path
       end
     end
   end
