@@ -87,7 +87,7 @@ class ConfigsController < ApplicationController
           config = Smash.new
           @account.services(isolated_product? ? @product : nil).each do |srv|
             srv.service_config_items.each do |item|
-              if(params[:account_config] && params[:account_config][srv.id.to_s] && params[:account_config][srv.id.to_s][item.id.to_s])
+              if(params[:account_config] && params[:account_config][srv.id.to_s] && !params[:account_config][srv.id.to_s][item.id.to_s].blank?)
                 if(item.type == 'hash')
                   val = MultiJson.load(params[:account_config][srv.id.to_s][item.id.to_s])
                 else
