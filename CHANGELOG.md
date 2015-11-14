@@ -1,3 +1,6 @@
+# v0.1.10
+* [fix] Properly ignore blank values on configuration update
+
 # v0.1.8
 * [fix] Allow js format on destroy requests
 
