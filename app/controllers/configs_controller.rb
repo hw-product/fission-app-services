@@ -19,7 +19,7 @@ class ConfigsController < ApplicationController
         javascript_redirect_to dashboard_url
       end
       format.html do
-        @services = @account.services(isolated_product? ? @product : nil).sort_by(&:name)
+        @services = @account.product_features.map(&:services).flatten.uniq.sort_by(&:name)
       end
     end
   end
@@ -31,20 +31,8 @@ class ConfigsController < ApplicationController
         javascript_redirect_to dashboard_url
       end
       format.html do
-        config = Smash.new
-        @account.services(isolated_product? ? @product : nil).each do |srv|
-          srv.service_config_items.each do |item|
-            # @todo OMG just convert params to smash and use #get
-            if(params[:account_config] && params[:account_config][srv.id.to_s] && params[:account_config][srv.id.to_s][item.id.to_s] && !params[:account_config][srv.id.to_s][item.id.to_s].blank?)
-              if(item.type == 'hash')
-                val = MultiJson.load(params[:account_config][srv.id.to_s][item.id.to_s])
-              else
-                val = params[:account_config][srv.id.to_s][item.id.to_s]
-              end
-              config.set(*item.name.split('__').unshift(srv.name), val)
-            end
-          end
-        end
+        @services = @account.product_features.map(&:services).flatten.uniq
+        config = assign_config(@services)
         AccountConfig.create(
           :name => Bogo::Utility.snake(params[:name]).tr(' ', '_'),
           :description => params[:description],
@@ -69,7 +57,7 @@ class ConfigsController < ApplicationController
           flash[:error] = 'Failed to locate requested configuration pack!'
           redirect_to configs_path
         else
-          @services = @account.services(isolated_product? ? @product : nil).sort_by(&:name)
+          @services = @account.product_features.map(&:services).flatten.uniq.sort_by(&:name)
         end
       end
     end
@@ -84,19 +72,8 @@ class ConfigsController < ApplicationController
       format.html do
         account_config = @account.account_configs_dataset.where(:id => params[:id]).first
         if(account_config)
-          config = Smash.new
-          @account.services(isolated_product? ? @product : nil).each do |srv|
-            srv.service_config_items.each do |item|
-              if(params[:account_config] && params[:account_config][srv.id.to_s] && !params[:account_config][srv.id.to_s][item.id.to_s].blank?)
-                if(item.type == 'hash')
-                  val = MultiJson.load(params[:account_config][srv.id.to_s][item.id.to_s])
-                else
-                  val = params[:account_config][srv.id.to_s][item.id.to_s]
-                end
-                config.set(*item.name.split('__').unshift(srv.name), val)
-              end
-            end
-          end
+          @services = @account.product_features.map(&:services).flatten.uniq
+          config = assign_config(@services)
           account_config.data = config
           account_config.description = params[:description]
           account_config.save
@@ -126,6 +103,31 @@ class ConfigsController < ApplicationController
         redirect_to configs_path
       end
     end
+  end
+
+  protected
+
+  def assign_config(services)
+    config = Smash.new
+    services.each do |srv|
+      srv.service_config_items.each do |item|
+        if(params[:account_config] && params[:account_config][srv.id.to_s] && !params[:account_config][srv.id.to_s][item.id.to_s].blank?)
+          val = params[:account_config][srv.id.to_s][item.id.to_s]
+          case item.type
+          when 'hash'
+            val = MultiJson.load(val)
+            next if val.empty?
+          when 'boolean'
+            val = val == '1'
+            next unless val
+          when 'number'
+            val = val.to_f
+          end
+          config.set(*item.name.split('__').unshift(srv.name), val)
+        end
+      end
+    end
+    config
   end
 
 end
