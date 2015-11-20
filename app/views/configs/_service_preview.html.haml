@@ -1,0 +1,24 @@
+%table.table.table-bordered
+  - service.service_config_items_dataset.order(:name).each do |sci|
+    - next if (value = config.get(service.name, *sci.name.split('__'))).nil?
+    %tr
+      %td
+        %b= sci.name.humanize
+      %td
+        .item
+          :ruby
+            case sci.type
+            when 'hash'
+              unless(value.is_a?(Hash))
+               value = MultiJson.load(value)
+              else
+                value = MultiJson.load(MultiJson.dump(value))
+              end
+              value = JSON.pretty_generate(value)
+            when 'boolean'
+              value = (!!value).inspect
+            end
+          - if sci.type == 'hash'
+            %pre= value
+          - else
+            = value

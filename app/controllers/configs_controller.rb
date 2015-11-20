@@ -16,10 +16,10 @@ class ConfigsController < ApplicationController
     respond_to do |format|
       format.js do
         flash[:error] = 'Unsupported request!'
-        javascript_redirect_to dashboard_url
+        javascript_redirect_to configs_path
       end
       format.html do
-        @services = @account.product_features.map(&:services).flatten.uniq.sort_by(&:name)
+        populate_services!
       end
     end
   end
@@ -28,10 +28,10 @@ class ConfigsController < ApplicationController
     respond_to do |format|
       format.js do
         flash[:error] = 'Unsupported request!'
-        javascript_redirect_to dashboard_url
+        javascript_redirect_to configs_path
       end
       format.html do
-        @services = @account.product_features.map(&:services).flatten.uniq
+        populate_services!
         config = assign_config(@services)
         AccountConfig.create(
           :name => Bogo::Utility.snake(params[:name]).tr(' ', '_'),
@@ -49,7 +49,7 @@ class ConfigsController < ApplicationController
     respond_to do |format|
       format.js do
         flash[:error] = 'Unsupported request!'
-        javascript_redirect_to dashboard_url
+        javascript_redirect_to configs_path
       end
       format.html do
         @config = @account.account_configs_dataset.where(:id => params[:id]).first
@@ -57,7 +57,11 @@ class ConfigsController < ApplicationController
           flash[:error] = 'Failed to locate requested configuration pack!'
           redirect_to configs_path
         else
-          @services = @account.product_features.map(&:services).flatten.uniq.sort_by(&:name)
+          populate_services!
+          @defined_services = @services.find_all do |srv|
+            @config.data[srv.name]
+          end
+          @undefined_services = @services - @defined_services
         end
       end
     end
@@ -67,12 +71,12 @@ class ConfigsController < ApplicationController
     respond_to do |format|
       format.js do
         flash[:error] = 'Unsupported request!'
-        javascript_redirect_to dashboard_url
+        javascript_redirect_to configs_path
       end
       format.html do
         account_config = @account.account_configs_dataset.where(:id => params[:id]).first
         if(account_config)
-          @services = @account.product_features.map(&:services).flatten.uniq
+          populate_services!
           config = assign_config(@services)
           account_config.data = config
           account_config.description = params[:description]
@@ -105,17 +109,62 @@ class ConfigsController < ApplicationController
     end
   end
 
+  def edit_service
+    respond_to do |format|
+      format.js do
+        populate_services!
+        @config = assign_config(@services, params[:data])
+        @service = @services.detect{|s| s.name == params[:service]}
+      end
+      format.html do
+        flash[:error] = 'Unsupported request!'
+        redirect_to configs_path
+      end
+    end
+  end
+
+  def preview_service
+    respond_to do |format|
+      format.js do
+        populate_services!
+        @config = assign_config(@services, params[:data])
+        @service = @services.detect{|s| s.name == params[:service]}
+      end
+      format.html do
+        flash[:error] = 'Unsupported request!'
+        redirect_to configs_path
+      end
+    end
+  end
+
+  def apply_service
+    respond_to do |format|
+      format.js do
+        populate_services!
+        @config = assign_config(@services, params[:data])
+        @service = @services.detect{|s| s.name == params[:service]}
+      end
+      format.html do
+        flash[:error] = 'Unsupported request!'
+        redirect_to configs_path
+      end
+    end
+  end
+
   protected
 
-  def assign_config(services)
+  def assign_config(services, p_items=nil)
+    p_items = params unless p_items
     config = Smash.new
     services.each do |srv|
       srv.service_config_items.each do |item|
-        if(params[:account_config] && params[:account_config][srv.id.to_s] && !params[:account_config][srv.id.to_s][item.id.to_s].blank?)
-          val = params[:account_config][srv.id.to_s][item.id.to_s]
+        if(p_items[:account_config] && p_items[:account_config][srv.id.to_s] && !p_items[:account_config][srv.id.to_s][item.id.to_s].blank?)
+          val = p_items[:account_config][srv.id.to_s][item.id.to_s]
           case item.type
           when 'hash'
-            val = MultiJson.load(val)
+            unless(val.is_a?(Hash))
+              val = MultiJson.load(val)
+            end
             next if val.empty?
           when 'boolean'
             val = val == '1'
@@ -128,6 +177,12 @@ class ConfigsController < ApplicationController
       end
     end
     config
+  end
+
+  def populate_services!
+    @services = @account.product_features.map(&:services).flatten.uniq.sort_by(&:name).find_all do |srv|
+      srv.service_config_items_dataset.count > 0
+    end
   end
 
 end

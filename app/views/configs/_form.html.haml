@@ -1,18 +1,89 @@
 = bootstrap_form_tag form_opts.merge(:html => {:id => 'config-form'}) do |f|
   = f.text_field :name, :value => @config ? @config.name : nil, :disabled => !!@config
   = f.text_field :description, :value => @config ? @config.description : nil
-  - @services.each do |srv|
-    - next if srv.service_config_items_dataset.count < 1
-    %div.panel.panel-info
-      %div.panel-heading= srv.name.humanize
-      %div.panel-body
-        - srv.service_config_items_dataset.order(:name).all.each do |item|
-          - case item.type
-          - when 'string', 'number'
-            = f.text_field item.name, :name => "account_config[#{srv.id}][#{item.id}]", :help => item.description, :value => @config ? @config.data.get(*item.name.split('__').unshift(srv.name)) : nil
-          - when 'hash'
-            = f.text_area item.name, :name => "account_config[#{srv.id}][#{item.id}]", :help => item.description, :value => @config && @config.data.get(*item.name.split('__').unshift(srv.name)) ? MultiJson.dump(@config.data.get(*item.name.split('__').unshift(srv.name))) : nil, :label => "#{item.name.humanize} (JSON Hash)"
-          - when 'boolean'
-            = f.check_box item.name, :name => "account_config[#{srv.id}][#{item.id}]", :help => item.description, :checked => @config && @config.data.get(*item.name.split('__').unshift(srv.name))
+
+  %fieldset
+    %legend
+      Service Configurations
+    .service-config-collection.container-fluid
+      - ([:adder] + @defined_services).each_slice(3) do |srvs|
+        .row
+          - srvs.each do |srv|
+            .col-md-4
+              - if srv == :adder
+                = render :partial => 'service_config_adder'
+              - else
+                = render :partial => 'service_config_item', :locals => {:srv => srv}
   = f.submit 'Save', :disable_with => 'Saving...', :class => 'btn btn-success pull-right'
   .clearfix
+
+
+:javascript
+
+  function config_form_setup(){
+    // hover behavior for existing service configs
+    $('.service-config-panel').hover(
+      function(){
+        $(this).find('.service-config-icon').removeClass('fa-4x');
+        $(this).find('.service-config-icon').addClass('fa-5x');
+        $(this).find('.controls').removeClass('hidden');
+        $(this).css('cursor', 'pointer');
+      },
+      function(){
+        $(this).find('.service-config-icon').removeClass('fa-5x');
+        $(this).find('.service-config-icon').addClass('fa-4x');
+        $(this).find('.controls').addClass('hidden');
+        $(this).css('cursor', 'auto');
+      }
+    );
+    // hover behavior for adding service config
+    $('#service-config-adder').hover(
+      function(){
+        $(this).find('.colorize').removeClass('text-primary');
+        $(this).find('.colorize').addClass('text-success');
+        $(this).removeClass('panel-primary');
+        $(this).addClass('panel-success');
+      },
+      function(){
+        $(this).find('.colorize').addClass('text-primary');
+        $(this).find('.colorize').removeClass('text-success');
+        $(this).removeClass('panel-success');
+        $(this).addClass('panel-primary');
+      }
+    );
+
+    $('.edit-control').click(function(){
+      current_data = {};
+      $(this).parents('.config-item').find('.config-item-data textarea').each(function(){
+        current_data[$(this).attr('name')] = $(this).val();
+      });
+      $.post('#{edit_service_configs_path}', {
+        config: '#{@config.id}',
+        service: $(this).parents('.config-item').attr('data-service-name'),
+        data: current_data
+      });
+      return false;
+    });
+
+    $('#service-config-adder').click(function(){
+      $.get('#{list_services_configs_path}');
+      return false;
+    });
+
+    $('.service-config-panel.config-item').click(function(){
+      current_data = {};
+      $(this).find('.config-item-data textarea').each(function(){
+        current_data[$(this).attr('name')] = $(this).val();
+      });
+      $.post('#{preview_service_configs_path}', {
+        config: '#{@config.id}',
+        service: $(this).attr('data-service-name'),
+        data: current_data
+      });
+      return false;
+    });
+
+  }
+
+  $(document).ready(config_form_setup);
+  $(document).on('page:load', config_form_setup);

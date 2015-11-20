@@ -1,7 +1,15 @@
 Rails.application.routes.draw do
 
   resources :custom_services
-  resources :configs
+  resources :configs do
+    collection do
+      get :list_services
+      post :edit_service
+      post :preview_service
+      post :apply_service
+      delete :remove_service
+    end
+  end
 
   namespace :admin do
     resources :services, :only => [:index, :edit, :update] do

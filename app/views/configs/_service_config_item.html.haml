@@ -1,0 +1,25 @@
+.panel.service-config-panel.config-item.panel-info{:id => "service-config-#{srv.name}", 'data-service-name' => srv.name}
+  .panel-body
+    .row
+      .col-md-2
+      .col-md-8
+        .colorize.text-info
+          %center
+            .fa.fa-cubes.fa-4x.service-config-icon
+          %center
+            = srv.name.humanize
+      .col-md-2.controls.hidden
+        .edit-control{:style => 'padding: 2px;'}
+          = link_to yield(:edit_icon), '#', :class => ''
+        .delete-control{:style => 'padding: 2px;'}
+          = link_to yield(:delete_icon), '#', :class => ''
+  .config-item-data.hidden
+    - srv.service_config_items_dataset.order(:name).all.each do |item|
+      :ruby
+        if @config && @config.data.get(*item.name.split('__').unshift(srv.name))
+          value = @config.data.get(*item.name.split('__').unshift(srv.name))
+          if item.type == 'hash'
+            value = MultiJson.dump(value)
+          end
+        end
+      = text_area_tag "account_config[#{srv.id}][#{item.id}]", value, :id => "config-#{srv.id}-#{item.id}"

@@ -1,0 +1,14 @@
+<%=
+  create_window(
+    :name => 'service_edit',
+    :title => "Edit Config: #{@service.name.humanize}",
+    :size => 'normal',
+    :content => render(
+      :partial => 'service_edit',
+      :locals => {
+        :service => @service,
+        :config => @config
+      }
+    )
+  )
+%>
