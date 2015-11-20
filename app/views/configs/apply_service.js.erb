@@ -4,3 +4,9 @@ content = render(:partial => 'service_config_collection', :locals => {:config_da
 $('.service-config-collection').html('<%= escape_javascript(content) %>');
 <%= close_window('service_edit') %>
 config_form_setup();
+ctn = $('#service-config-<%= @service.name %>');
+ctn.removeClass('panel-info');
+ctn.addClass('panel-warning');
+ctn.find('.colorize').removeClass('text-info');
+ctn.find('.colorize').addClass('text-warning');
+sparkle_ui.display.highlight('service-config-<%= @service.name %>');
