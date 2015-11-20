@@ -1,3 +1,4 @@
+.clearfix
 %table.table.table-bordered
   - service.service_config_items_dataset.order(:name).each do |sci|
     - next if (value = config.get(service.name, *sci.name.split('__'))).nil?
@@ -22,3 +23,17 @@
             %pre= value
           - else
             = value
+:javascript
+  $('.preview-edit-control').click(function(){
+    current_data = {};
+    $('#service-config-#{service.name}').find('.config-item-data textarea').each(function(){
+      current_data[$(this).attr('name')] = $(this).val();
+    });
+    #{close_window('service_preview')}
+    $.post('#{edit_service_configs_path}', {
+      config: '#{config.id}',
+      service: '#{service.name}',
+      data: current_data
+    });
+    return false;
+  });

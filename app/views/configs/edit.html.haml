@@ -1,5 +1,8 @@
 - content_for(:heading_title) do
   = "Edit Account Config: #{@config.name}"
+  %span.mod-message.hidden
+    %b.text-danger
+      (** Modified! **)
   :ruby
     link_opts = Smash.new(
       'window-rails-ajax' => 'delete',
@@ -32,4 +35,4 @@
     )
   end
 
-= render(:partial => 'layouts/container', :locals => {:container_class => "#{id}-form", :container_id => id})
+= render(:partial => 'layouts/container', :locals => {:container_class => "#{id}-form", :container_id => "#{id}-holder"})

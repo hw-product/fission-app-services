@@ -13,6 +13,31 @@
 
 :javascript
 
+  function gather_configs(){
+    current_data = {};
+    $('.config-item-data textarea').each(function(){
+      current_data[$(this).attr('name')] = $(this).val();
+    });
+    return current_data;
+  }
+
+  function apply_configs(){
+    $.post('#{apply_service_configs_path}', {
+      data: gather_configs()
+    });
+  }
+
+  function delete_service_config(elm){
+    root = elm.parents('.config-item');
+    root.find('.config-item-data').remove();
+    sparkle_ui.display.highlight(root.attr('id'), 'danger');
+    setTimeout(function(){
+      root.toggle('fade');
+      apply_configs();
+      window_rails.loading.close();
+    }, 1000);
+  }
+
   function config_form_setup(){
     // hover behavior for existing service configs
     $('.service-config-panel').hover(
@@ -64,6 +89,10 @@
     });
 
     $('.service-config-panel.config-item').click(function(){
+      if($(this).parents('.controls')[0]){
+        console.log('In control box');
+        return true;
+      } else {
       current_data = {};
       $(this).find('.config-item-data textarea').each(function(){
         current_data[$(this).attr('name')] = $(this).val();
@@ -74,6 +103,7 @@
         data: current_data
       });
       return false;
+      }
     });
 
   }

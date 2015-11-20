@@ -12,7 +12,7 @@
         .edit-control{:style => 'padding: 2px;'}
           = link_to yield(:edit_icon), '#', :class => ''
         .delete-control{:style => 'padding: 2px;'}
-          = link_to yield(:delete_icon), '#', :class => ''
+          = link_to yield(:delete_icon), '#', :class => 'window-rails', 'window-rails-callback' => 'delete_service_config', 'window-rails-confirm' => "Delete `#{srv.name.humanize}` service configuration?", 'window-rails-title' => 'Service Configuration Removal'
   .config-item-data.hidden
     - srv.service_config_items_dataset.order(:name).all.each do |item|
       :ruby

@@ -154,6 +154,18 @@ class ConfigsController < ApplicationController
     end
   end
 
+  def list_services
+    respond_to do |format|
+      format.js do
+
+      end
+      format.html do
+        flash[:error] = 'Unsupported request!'
+        redirect_to configs_path
+      end
+    end
+  end
+
   protected
 
   def assign_config(services, p_items=nil)
