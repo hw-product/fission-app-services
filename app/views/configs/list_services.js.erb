@@ -1,0 +1,13 @@
+<%=
+  create_window(
+    :name => 'service_add',
+    :title => 'Add new service configuration',
+    :size => 'normal',
+    :content => render(
+      :partial => 'service_list',
+      :locals => {
+        :services => @available_services
+      }
+    )
+  )
+%>

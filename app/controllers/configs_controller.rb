@@ -143,6 +143,9 @@ class ConfigsController < ApplicationController
         populate_services!
         @config = assign_config(@services, params[:data])
         @service = @services.detect{|s| s.name == params[:service]}
+        if(@service && !@config.has_key?(@service.name))
+          @config[@service.name] = Smash.new
+        end
         @defined_services = @services.find_all do |srv|
           @config.keys.include?(srv.name)
         end
@@ -157,7 +160,11 @@ class ConfigsController < ApplicationController
   def list_services
     respond_to do |format|
       format.js do
-
+        populate_services!
+        @config = assign_config(@services, params[:data])
+        @available_services = @services.find_all do |srv|
+          !@config.keys.include?(srv.name)
+        end
       end
       format.html do
         flash[:error] = 'Unsupported request!'

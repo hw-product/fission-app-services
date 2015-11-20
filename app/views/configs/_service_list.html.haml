@@ -1,0 +1,21 @@
+.service-config-adder{:style => 'max-height: 80%; overflow: auto;'}
+  - services.each do |srv|
+    .panel.panel-info.service-config-adder-panel{'data-service-name' => srv.name}
+      .panel-body
+        .row
+          .col-md-1
+          .col-md-4
+            .colorize.text-info
+              %center
+                .fa.fa-cubes.fa-4x.service-config-icon
+              %center
+                = srv.name.humanize
+          .col-md-1
+          .col-md-6= srv.description
+
+:javascript
+  $('.service-config-adder-panel').click(function(){
+    window_rails.loading.open();
+    window_rails.close_window('service_add');
+    apply_configs($(this).attr('data-service-name'));
+  });

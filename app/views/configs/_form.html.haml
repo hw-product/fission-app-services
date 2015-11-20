@@ -21,9 +21,17 @@
     return current_data;
   }
 
-  function apply_configs(){
+  function apply_configs(srv_name){
     $.post('#{apply_service_configs_path}', {
-      data: gather_configs()
+      data: gather_configs(),
+      service: srv_name,
+      success: function(){
+        if(srv_name){
+          setTimeout(function(){
+            $('#service-config-' + srv_name).find('.edit-control').trigger('click');
+          }, 1500);
+        }
+      }
     });
   }
 
@@ -84,15 +92,13 @@
     });
 
     $('#service-config-adder').click(function(){
-      $.get('#{list_services_configs_path}');
+      $.post('#{list_services_configs_path}', {
+        data: gather_configs()
+      });
       return false;
     });
 
     $('.service-config-panel.config-item').click(function(){
-      if($(this).parents('.controls')[0]){
-        console.log('In control box');
-        return true;
-      } else {
       current_data = {};
       $(this).find('.config-item-data textarea').each(function(){
         current_data[$(this).attr('name')] = $(this).val();
@@ -103,7 +109,6 @@
         data: current_data
       });
       return false;
-      }
     });
 
   }

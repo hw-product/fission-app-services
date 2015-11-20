@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   resources :custom_services
   resources :configs do
     collection do
-      get :list_services
+      post :list_services
       post :edit_service
       post :preview_service
       post :apply_service
