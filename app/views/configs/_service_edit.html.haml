@@ -17,14 +17,14 @@
                     value = MultiJson.load(MultiJson.dump(value))
                   end
                   value = JSON.pretty_generate(value)
-                when 'boolean'
-                  value = (!!value).inspect
                 end
+              else
+                value = nil
               end
             - if sci.type == 'hash'
               = text_area_tag "account_config[#{service.id}][#{sci.id}]", value, :class => 'form-control'
             - elsif sci.type == 'boolean'
-              = check_box_tag "account_config[#{service.id}][#{sci.id}]", :checked => value, :class => 'form-control'
+              = check_box_tag "account_config[#{service.id}][#{sci.id}]", 'true', value, :class => 'form-control checkbox'
             - else
               = text_field_tag "account_config[#{service.id}][#{sci.id}]", value, :class => 'form-control'
   .pull-right
@@ -37,7 +37,13 @@
     $('.config-item-data textarea').each(function(){
       current_data[$(this).attr('name')] = $(this).val();
     });
-    $(this).parents('.config-editor').find('.form-control').each(function(){
+    $(this).parents('.config-editor').find('input:text').each(function(){
+      current_data[$(this).attr('name')] = $(this).val();
+    });
+    $(this).parents('.config-editor').find('textarea').each(function(){
+      current_data[$(this).attr('name')] = $(this).val();
+    });
+    $(this).parents('.config-editor').find('input:checkbox:checked').each(function(){
       current_data[$(this).attr('name')] = $(this).val();
     });
     $.post('#{apply_service_configs_path}', {

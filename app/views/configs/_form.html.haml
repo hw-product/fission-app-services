@@ -6,14 +6,7 @@
     %legend
       Service Configurations
     .service-config-collection.container-fluid
-      - ([:adder] + @defined_services).each_slice(3) do |srvs|
-        .row
-          - srvs.each do |srv|
-            .col-md-4
-              - if srv == :adder
-                = render :partial => 'service_config_adder'
-              - else
-                = render :partial => 'service_config_item', :locals => {:srv => srv}
+      = render :partial => 'service_config_collection', :locals => {:config_data => @config.data}
   = f.submit 'Save', :disable_with => 'Saving...', :class => 'btn btn-success pull-right'
   .clearfix
 

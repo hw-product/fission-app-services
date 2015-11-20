@@ -16,8 +16,8 @@
   .config-item-data.hidden
     - srv.service_config_items_dataset.order(:name).all.each do |item|
       :ruby
-        if @config && @config.data.get(*item.name.split('__').unshift(srv.name))
-          value = @config.data.get(*item.name.split('__').unshift(srv.name))
+        if config_data && config_data.get(*item.name.split('__').unshift(srv.name))
+          value = config_data.get(*item.name.split('__').unshift(srv.name))
           if item.type == 'hash'
             value = MultiJson.dump(value)
           end

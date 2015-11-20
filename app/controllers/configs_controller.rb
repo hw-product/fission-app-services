@@ -143,6 +143,9 @@ class ConfigsController < ApplicationController
         populate_services!
         @config = assign_config(@services, params[:data])
         @service = @services.detect{|s| s.name == params[:service]}
+        @defined_services = @services.find_all do |srv|
+          @config.keys.include?(srv.name)
+        end
       end
       format.html do
         flash[:error] = 'Unsupported request!'
@@ -167,7 +170,7 @@ class ConfigsController < ApplicationController
             end
             next if val.empty?
           when 'boolean'
-            val = val == '1'
+            val = val == 'true'
             next unless val
           when 'number'
             val = val.to_f

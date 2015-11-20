@@ -1,0 +1,6 @@
+<%
+content = render(:partial => 'service_config_collection', :locals => {:config_data => @config})
+%>
+$('.service-config-collection').html('<%= escape_javascript(content) %>');
+<%= close_window('service_edit') %>
+config_form_setup();
