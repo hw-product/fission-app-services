@@ -49,6 +49,9 @@ class Admin::ServicesController < ApplicationController
         unless(@service.cost == params[:price])
           @service.price = params[:price].to_i
         end
+        @service.alias = params[:alias]
+        @service.icon = params[:icon]
+        @service.save
         flash[:success] = 'Service updated!'
         redirect_to admin_services_path
       end

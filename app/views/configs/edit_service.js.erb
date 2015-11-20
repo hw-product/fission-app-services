@@ -1,7 +1,7 @@
 <%=
   create_window(
     :name => 'service_edit',
-    :title => "Edit Config: #{@service.name.humanize}",
+    :title => "Edit Config: #{@service.display_name.humanize}",
     :size => 'normal',
     :content => render(
       :partial => 'service_edit',

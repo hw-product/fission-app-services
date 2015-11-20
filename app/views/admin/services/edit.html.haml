@@ -1,5 +1,7 @@
 - content_for(:panel) do
   = bootstrap_form_tag :url => admin_service_path(@service.id), :method => :put, :html => {:id => 'feature-form'} do |f|
+    = f.text_field :alias, :value => @service.alias
+    = f.text_field :icon, :value => @service.icon
     - if engine?(:stripe)
       = f.text_field :price, :prepend => '$', :append => '.00', :value => @service.cost > 0 ? @service.cost : nil
     .panel.panel-default
@@ -15,6 +17,7 @@
               %tr
                 %td{:class => @service.product_features.include?(feature) ? 'success' : 'text-danger', 'feature-id' => feature.id, 'feature-active' => @service.product_features.include?(feature).to_s}= feature.name.humanize
     = f.submit 'Save', :class => 'btn btn-success pull-right', :id => 'feature-form-submit'
+    .clearfix
 
 :ruby
   output = render(

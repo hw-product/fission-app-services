@@ -1,5 +1,5 @@
 <% content_for(:service_config_preview_title) do -%>
-Service Config: <%= @service.name.humanize %>
+Service Config: <%= @service.display_name.humanize %>
 <div class="preview-edit-control pull-right" style="padding-right: 5px;" data-service-id="<%= @service.id %>">
  <%= link_to yield(:edit_icon), '#' %>
 </div>

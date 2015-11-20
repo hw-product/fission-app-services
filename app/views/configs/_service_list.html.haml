@@ -7,9 +7,9 @@
           .col-md-4
             .colorize.text-primary
               %center
-                .fa.fa-cubes.fa-4x.service-config-icon
+                .fa.fa-4x.service-config-icon{:class => "fa-#{srv.icon || 'cog'}"}
               %center
-                = srv.name.humanize
+                = srv.display_name.humanize
           .col-md-1
           .col-md-6.colorize.text-primary= srv.description
 
