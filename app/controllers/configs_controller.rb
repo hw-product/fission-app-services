@@ -20,6 +20,7 @@ class ConfigsController < ApplicationController
       end
       format.html do
         populate_services!
+        @defined_services = []
       end
     end
   end

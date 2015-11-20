@@ -6,7 +6,7 @@
     %legend
       Service Configurations
     .service-config-collection.container-fluid
-      = render :partial => 'service_config_collection', :locals => {:config_data => @config.data}
+      = render :partial => 'service_config_collection', :locals => {:config_data => @config.try(:data) || Smash.new}
   = f.submit 'Save', :disable_with => 'Saving...', :class => 'btn btn-success pull-right'
   .clearfix
 
@@ -84,7 +84,7 @@
         current_data[$(this).attr('name')] = $(this).val();
       });
       $.post('#{edit_service_configs_path}', {
-        config: '#{@config.id}',
+        config: #{@config.try(:id) || 'null'},
         service: $(this).parents('.config-item').attr('data-service-name'),
         data: current_data
       });
@@ -104,7 +104,7 @@
         current_data[$(this).attr('name')] = $(this).val();
       });
       $.post('#{preview_service_configs_path}', {
-        config: '#{@config.id}',
+        config: #{@config.try(:id) || 'null'},
         service: $(this).attr('data-service-name'),
         data: current_data
       });
