@@ -1,17 +1,17 @@
-.service-config-adder{:style => 'max-height: 80%; overflow: auto;'}
+.service-config-adder{:style => 'max-height: 500px; overflow: auto;'}
   - services.each do |srv|
-    .panel.panel-info.service-config-adder-panel{'data-service-name' => srv.name}
+    .panel.panel-primary.service-config-adder-panel{'data-service-name' => srv.name}
       .panel-body
         .row
           .col-md-1
           .col-md-4
-            .colorize.text-info
+            .colorize.text-primary
               %center
                 .fa.fa-cubes.fa-4x.service-config-icon
               %center
                 = srv.name.humanize
           .col-md-1
-          .col-md-6= srv.description
+          .col-md-6.colorize.text-primary= srv.description
 
 :javascript
   $('.service-config-adder-panel').click(function(){
@@ -19,3 +19,19 @@
     window_rails.close_window('service_add');
     apply_configs($(this).attr('data-service-name'));
   });
+  $('.service-config-adder-panel').hover(
+    function(){
+      $(this).find('.colorize').removeClass('text-primary');
+      $(this).find('.colorize').addClass('text-success');
+      $(this).removeClass('panel-primary');
+      $(this).addClass('panel-success');
+      $(this).css('cursor', 'pointer');
+    },
+    function(){
+      $(this).find('.colorize').addClass('text-primary');
+      $(this).find('.colorize').removeClass('text-success');
+      $(this).removeClass('panel-success');
+      $(this).addClass('panel-primary');
+      $(this).css('cursor', 'auto');
+    }
+  );
