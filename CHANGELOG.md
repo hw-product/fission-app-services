@@ -1,3 +1,6 @@
+# v0.2.0
+* Overhaul configuration pack UI
+
 # v0.1.10
 * [fix] Properly ignore blank values on configuration update
 
