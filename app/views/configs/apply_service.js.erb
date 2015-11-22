@@ -4,12 +4,14 @@ content = render(:partial => 'service_config_collection', :locals => {:config_da
 $('.service-config-collection').html('<%= escape_javascript(content) %>');
 <%= close_window('service_edit') %>
 config_form_setup();
-<% if @service -%>
-  ctn = $('#service-config-<%= @service.name %>');
+$('.config-item-data.modified').each(function(){
+  ctn = $(this).parents('.config-item');
   ctn.removeClass('panel-info');
   ctn.addClass('panel-warning');
   ctn.find('.colorize').removeClass('text-info');
   ctn.find('.colorize').addClass('text-warning');
+});
+<% if @service -%>
   sparkle_ui.display.highlight('service-config-<%= @service.name %>');
 <% end -%>
 $('#edit-account-config').removeClass('panel-default');

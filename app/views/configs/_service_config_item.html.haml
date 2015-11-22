@@ -1,3 +1,4 @@
+- is_modified = config_data && config_data.get(srv.name, '__is_modified__')
 .panel.service-config-panel.config-item.panel-info{:id => "service-config-#{srv.name}", 'data-service-name' => srv.name}
   .panel-body
     .row
@@ -13,7 +14,7 @@
           = link_to yield(:edit_icon), '#', :class => ''
         .delete-control{:style => 'padding: 2px;'}
           = link_to yield(:delete_icon), '#', :class => 'window-rails', 'window-rails-callback' => 'delete_service_config', 'window-rails-confirm' => "Delete `#{srv.display_name.humanize}` service configuration?", 'window-rails-title' => 'Service Configuration Removal'
-  .config-item-data.hidden
+  .config-item-data.hidden{:class => "#{'modified' if is_modified}"}
     - srv.service_config_items_dataset.order(:name).all.each do |item|
       :ruby
         if config_data && config_data.get(*item.name.split('__').unshift(srv.name))

@@ -147,6 +147,9 @@ class ConfigsController < ApplicationController
         if(@service && !@config.has_key?(@service.name))
           @config[@service.name] = Smash.new
         end
+        [params[:modified_services], @service.try(:name)].flatten.compact.uniq.each do |k|
+          @config[k]['__is_modified__'] = true
+        end
         @defined_services = @services.find_all do |srv|
           @config.keys.include?(srv.name)
         end

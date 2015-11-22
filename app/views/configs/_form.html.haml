@@ -21,10 +21,19 @@
     return current_data;
   }
 
+  function gather_modified(){
+    current_modified = []
+    $('.config-item-data.modified').each(function(){
+      current_modified.push($(this).parents('.config-item').attr('data-service-name'));
+    });
+    return current_modified;
+  }
+
   function apply_configs(srv_name){
     $.post('#{apply_service_configs_path}', {
       data: gather_configs(),
       service: srv_name,
+      modified_services: gather_modified(),
       success: function(){
         if(srv_name){
           setTimeout(function(){

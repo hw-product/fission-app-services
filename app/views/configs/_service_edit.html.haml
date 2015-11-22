@@ -48,6 +48,7 @@
     });
     $.post('#{apply_service_configs_path}', {
       service: '#{service.name}',
-      data: current_data
+      data: current_data,
+      modified_services: gather_modified()
     });
   });
