@@ -206,7 +206,7 @@ class ConfigsController < ApplicationController
   end
 
   def populate_services!
-    @services = @account.product_features.map(&:services).flatten.uniq.sort_by(&:name).find_all do |srv|
+    @services = current_product_features.map(&:services).flatten.uniq.sort_by(&:name).find_all do |srv|
       srv.service_config_items_dataset.count > 0
     end
   end
