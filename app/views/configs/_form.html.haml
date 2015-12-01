@@ -59,14 +59,10 @@
     // hover behavior for existing service configs
     $('.service-config-panel').hover(
       function(){
-        $(this).find('.service-config-icon').removeClass('fa-4x');
-        $(this).find('.service-config-icon').addClass('fa-5x');
         $(this).find('.controls').removeClass('hidden');
         $(this).css('cursor', 'pointer');
       },
       function(){
-        $(this).find('.service-config-icon').removeClass('fa-5x');
-        $(this).find('.service-config-icon').addClass('fa-4x');
         $(this).find('.controls').addClass('hidden');
         $(this).css('cursor', 'auto');
       }
