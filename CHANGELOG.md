@@ -1,3 +1,6 @@
+# v0.2.2
+* Track config modifications and store within UI
+
 # v0.2.0
 * Overhaul configuration pack UI
 
