@@ -1,3 +1,7 @@
+# v0.2.4
+* Use cached product features when collecting service information
+* Disable size change on hover
+
 # v0.2.2
 * Track config modifications and store within UI
 
