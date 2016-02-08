@@ -1,38 +1,33 @@
 .config-editor
-  %table.table.table-bordered
+  = bootstrap_form_tag :html => {:id => "service-config-#{service.id}-form"} do |f|
     - service.service_config_items_dataset.order(:name).each do |sci|
       - value = config.get(service.name, *sci.name.split('__'))
-      %tr.row
-        %td.col-md-3
-          %b= sci.name.humanize
-        %td.col-md-9
-          .item
-            :ruby
-              if(value.present?)
-                case sci.type
-                when 'hash'
-                  unless(value.is_a?(Hash))
-                    value = MultiJson.load(value)
-                  else
-                    value = MultiJson.load(MultiJson.dump(value))
-                  end
-                  value = JSON.pretty_generate(value)
-                end
-              else
-                value = nil
-              end
-            - if sci.type == 'hash'
-              = text_area_tag "account_config[#{service.id}][#{sci.id}]", value, :class => 'form-control'
-            - elsif sci.type == 'boolean'
-              = check_box_tag "account_config[#{service.id}][#{sci.id}]", 'true', value, :class => 'form-control checkbox'
-            - else
-              = text_field_tag "account_config[#{service.id}][#{sci.id}]", value, :class => 'form-control'
-  .pull-right
-    = link_to 'Apply', '#', :disable_with => 'Applying...', :class => 'btn btn-primary apply-editor'
-  .clearfix
+      :ruby
+        if(value.present?)
+          case sci.type
+          when 'hash'
+            unless(value.is_a?(Hash))
+              value = MultiJson.load(value)
+            else
+              value = MultiJson.load(MultiJson.dump(value))
+            end
+            value = JSON.pretty_generate(value)
+          end
+        else
+          value = nil
+        end
+      - if sci.type == 'hash'
+        = f.text_area "account_config[#{service.id}][#{sci.id}]", :value => value, :label => sci.name.humanize
+      - elsif sci.type == 'boolean'
+        = f.check_box "account_config[#{service.id}][#{sci.id}]", :value => value, :label => sci.name.humanize
+      - else
+        = f.text_field "account_config[#{service.id}][#{sci.id}]", :value => value, :label => sci.name.humanize
+    .pull-right
+      = f.submit 'Apply', :disable_with => 'Applying...', :class => 'btn btn-success'
+    .clearfix
 
 :javascript
-  $('.apply-editor').click(function(){
+  $('#service-config-#{service.id}-form').submit(function(){
     current_data = {};
     $('.config-item-data textarea').each(function(){
       current_data[$(this).attr('name')] = $(this).val();
@@ -51,4 +46,5 @@
       data: current_data,
       modified_services: gather_modified()
     });
+    return false;
   });
