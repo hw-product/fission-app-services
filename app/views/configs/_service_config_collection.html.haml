@@ -1,4 +1,4 @@
-- ([:adder] + @defined_services).each_slice(3) do |srvs|
+- (@defined_services + [:adder]).each_slice(3) do |srvs|
   .row
     - srvs.each do |srv|
       .col-md-4

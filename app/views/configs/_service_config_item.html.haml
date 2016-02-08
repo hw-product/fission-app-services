@@ -1,6 +1,7 @@
 - is_modified = config_data && config_data.get(srv.name, '__is_modified__')
 .panel.service-config-panel.config-item.panel-info{:id => "service-config-#{srv.name}", 'data-service-name' => srv.name}
   .panel-body
+    %i.fa.fa-close.pull-right.config-item-delete{:style => 'color: darkred'}
     .row
       .col-md-2
       .col-md-8
@@ -9,11 +10,7 @@
             .fa.fa-4x.service-config-icon{:class => "fa-#{srv.icon || 'cog'}"}
           %center
             = srv.display_name.humanize
-      .col-md-2.controls.hidden
-        .edit-control{:style => 'padding: 2px;'}
-          = link_to yield(:edit_icon), '#', :class => ''
-        .delete-control{:style => 'padding: 2px;'}
-          = link_to yield(:delete_icon), '#', :class => 'window-rails', 'window-rails-callback' => 'delete_service_config', 'window-rails-confirm' => "Delete `#{srv.display_name.humanize}` service configuration?", 'window-rails-title' => 'Service Configuration Removal'
+      .col-md-2
   .config-item-data.hidden{:class => "#{'modified' if is_modified}"}
     - srv.service_config_items_dataset.order(:name).all.each do |item|
       :ruby

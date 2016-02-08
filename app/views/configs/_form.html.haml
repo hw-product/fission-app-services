@@ -37,7 +37,7 @@
       success: function(){
         if(srv_name){
           setTimeout(function(){
-            $('#service-config-' + srv_name).find('.edit-control').trigger('click');
+            $('#service-config-' + srv_name).trigger('click');
           }, 1500);
         }
       }
@@ -56,33 +56,6 @@
   }
 
   function config_form_setup(){
-    // hover behavior for existing service configs
-    $('.service-config-panel').hover(
-      function(){
-        $(this).find('.controls').removeClass('hidden');
-        $(this).css('cursor', 'pointer');
-      },
-      function(){
-        $(this).find('.controls').addClass('hidden');
-        $(this).css('cursor', 'auto');
-      }
-    );
-    // hover behavior for adding service config
-    $('#service-config-adder').hover(
-      function(){
-        $(this).find('.colorize').removeClass('text-primary');
-        $(this).find('.colorize').addClass('text-success');
-        $(this).removeClass('panel-primary');
-        $(this).addClass('panel-success');
-      },
-      function(){
-        $(this).find('.colorize').addClass('text-primary');
-        $(this).find('.colorize').removeClass('text-success');
-        $(this).removeClass('panel-success');
-        $(this).addClass('panel-primary');
-      }
-    );
-
     $('.edit-control').click(function(){
       current_data = {};
       $(this).parents('.config-item').find('.config-item-data textarea').each(function(){
@@ -103,12 +76,22 @@
       return false;
     });
 
+    $('.config-item-delete').click(function(){
+      window_rails.confirm.open({
+        content: 'Delete service configuration item',
+        callback: 'delete_service_config',
+        title: 'Service Configuration Removal',
+        element: $(this)
+      });
+      return false;
+    });
+
     $('.service-config-panel.config-item').click(function(){
       current_data = {};
       $(this).find('.config-item-data textarea').each(function(){
         current_data[$(this).attr('name')] = $(this).val();
       });
-      $.post('#{preview_service_configs_path}', {
+      $.post('#{edit_service_configs_path}', {
         config: #{@config.try(:id) || 'null'},
         service: $(this).attr('data-service-name'),
         data: current_data

@@ -10,7 +10,7 @@ Service Config: <%= @service.display_name.humanize %>
   create_window(
     :name => 'service_preview',
     :title => yield(:service_config_preview_title),
-    :size => 'large',
+    :size => 'normal',
     :content => render(
       :partial => 'service_preview',
       :locals => {
