@@ -29,12 +29,13 @@ class CustomServicesController < ApplicationController
         javascript_redirect_to dashboard_path
       end
       format.html do
-        CustomService.create(
+        srv = CustomService.create(
           :name => Bogo::Utility.snake(params[:name]).tr(' ', '_'),
           :enabled => !!params[:enabled],
           :endpoint => params[:endpoint],
           :account_id => @account.id
         )
+        notify!(:create, :custom_service => srv)
         flash[:success] = 'New custom service created!'
         redirect_to custom_services_path
       end
@@ -69,6 +70,7 @@ class CustomServicesController < ApplicationController
           service.enabled = !!params[:enabled]
           service.endpoint = params[:endpoint]
           service.save
+          notify!(:update, :custom_service => service)
           flash[:success] = 'New custom service created!'
           redirect_to custom_services_path
         else
@@ -84,6 +86,7 @@ class CustomServicesController < ApplicationController
       service = CustomService.find_by_id(params[:id])
       if(service)
         if(service.destroy)
+          notify!(:destroy, :custom_service => service)
           flash[:success] = 'Custom service successfully destroyed!'
         else
           flash[:error] = 'Failed to destroy custom service!'
