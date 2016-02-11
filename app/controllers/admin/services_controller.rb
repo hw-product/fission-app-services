@@ -51,7 +51,9 @@ class Admin::ServicesController < ApplicationController
         end
         @service.alias = params[:alias]
         @service.icon = params[:icon]
-        @service.save
+        notify!(:update, :service => @service) do
+          @service.save
+        end
         flash[:success] = 'Service updated!'
         redirect_to admin_services_path
       end

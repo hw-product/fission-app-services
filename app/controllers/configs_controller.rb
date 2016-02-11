@@ -34,12 +34,13 @@ class ConfigsController < ApplicationController
       format.html do
         populate_services!
         config = assign_config(@services)
-        AccountConfig.create(
+        ac = AccountConfig.create(
           :name => Bogo::Utility.snake(params[:name]).tr(' ', '_'),
           :description => params[:description],
           :data => config,
           :account_id => @account.id
         )
+        notify!(:create, :account_config => ac)
         flash[:success] = 'New configuration pack created!'
         redirect_to configs_path
       end
@@ -82,6 +83,7 @@ class ConfigsController < ApplicationController
           account_config.data = config
           account_config.description = params[:description]
           account_config.save
+          notify!(:update, :account_config => account_config)
           flash[:success] = 'Configuration updated!'
           redirect_to configs_path
         else
@@ -96,7 +98,9 @@ class ConfigsController < ApplicationController
     respond_to do |format|
       account_config = @account.account_configs_dataset.where(:id => params[:id]).first
       if(account_config)
-        account_config.destroy
+        notify!(:destroy, :account_config => account_config) do
+          account_config.destroy
+        end
         flash[:success] = 'Configuration pack destroyed!'
       else
         flash[:error] = 'Failed to located requested configuration pack!'

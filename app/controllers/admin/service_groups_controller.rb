@@ -52,6 +52,7 @@ class Admin::ServiceGroupsController < ApplicationController
           end
         end
         save_filters(group)
+        notify!(:create, :service_group => group)
         flash[:success] = 'New group created!'
         redirect_to admin_service_groups_path
       end
@@ -104,6 +105,7 @@ class Admin::ServiceGroupsController < ApplicationController
             end
           end
           save_filters(@service_group)
+        notify!(:update, :service_group => group)
           flash[:success] = 'Group updated!'
           redirect_to admin_service_groups_path
         else
@@ -119,6 +121,7 @@ class Admin::ServiceGroupsController < ApplicationController
       group = ServiceGroup.find_by_id(params[:id])
       if(group)
         if(group.destroy)
+          notify!(:destroy, :service_group => group)
           flash[:success] = 'Group successfully destroyed!'
         else
           flash[:error] = 'Failed to destroy group!'
