@@ -1,0 +1,23 @@
+.credentials
+  .aws
+    = @form.text_field :aws_things
+  .azure
+    = @form.text_field :azure_things
+  .rackspace
+    = @form.text_field :rackspace_things
+  .open_stack
+    = @form.text_field :open_stack_things
+
+:javascript
+  $(document).ready(function(){
+    $('.credentials').parents('form').on('miasma-provider', function(event, val){
+      console.log(event);
+      console.log(val);
+      if(val && val != ''){
+        $('.credentials').children().hide();
+        $('.credentials .' + val).show();
+      } else {
+        $('.credentials').children().hide();
+      }
+    });
+  });

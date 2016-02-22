@@ -1,0 +1,11 @@
+= @form.select @name, options_for_select([['', '']] + Rails.application.config.settings.fetch(:services, :valid_services, ['AWS', 'Azure', 'OpenStack', 'Rackspace']).map{|v| [v, Bogo::Utility.snake(v)]}, @value), {:label => @config.name.humanize}, :class => 'miasma-provider'
+
+:javascript
+  $(document).ready(function(){
+    $('select.miasma-provider').change(function(){
+      $(this).parents('form').trigger('miasma-provider', $(this).val());
+    });
+    setTimeout(function(){
+      $('select.miasma-provider').trigger('miasma-provider', $('select.miasma-provider').val());
+    }, 100);
+  });
