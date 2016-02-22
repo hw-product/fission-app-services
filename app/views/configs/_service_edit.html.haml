@@ -1,6 +1,6 @@
 .config-editor
   = bootstrap_form_tag :html => {:id => "service-config-#{service.id}-form"} do |f|
-    - service.service_config_items_dataset.order(:name).each do |sci|
+    - service.service_config_items_dataset.where(:enabled => true).order(:name).each do |sci|
       - value = config.get(service.name, *sci.name.split('__'))
       :ruby
         if(value.present?)
@@ -16,12 +16,15 @@
         else
           value = nil
         end
-      - if sci.type == 'hash'
-        = f.text_area "account_config[#{service.id}][#{sci.id}]", :value => value, :label => sci.name.humanize
+        item_name = "account_config[#{service.id}][#{sci.id}]"
+      - if sci.format_helper.present? && Object.const_defined?(sci.format_helper)
+        = render_cell sci.format_helper.underscore.sub('_cell', ''), :edit, :config => sci, :form => f, :value => value, :name => item_name
+      - elsif sci.type == 'hash'
+        = f.text_area item_name, :value => value, :label => sci.name.humanize
       - elsif sci.type == 'boolean'
-        = f.check_box "account_config[#{service.id}][#{sci.id}]", :value => value, :label => sci.name.humanize
+        = f.check_box item_name, :value => value, :label => sci.name.humanize
       - else
-        = f.text_field "account_config[#{service.id}][#{sci.id}]", :value => value, :label => sci.name.humanize
+        = f.text_field item_name, :value => value, :label => sci.name.humanize
     .pull-right
       = f.submit 'Apply', :disable_with => 'Applying...', :class => 'btn btn-success'
     .clearfix
