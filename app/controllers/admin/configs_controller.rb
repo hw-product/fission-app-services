@@ -43,8 +43,17 @@ class Admin::ConfigsController < ApplicationController
         javascript_redirect_to dashboard_path
       end
       format.html do
-        flash[:success] = 'Service updated!'
-        redirect_to admin_services_path
+        @config = @service.service_config_items_dataset.where(:id => params[:id]).first
+        if(@config)
+          @config.description = params[:description]
+          @config.format_helper = params[:format_helper].present? ? params[:format_helper] : nil
+          @config.enabled = params[:enabled] == '1'
+          @config.save
+          flash[:success] = 'Service updated!'
+        else
+          flash[:error] = 'Failed to locate requested configuration item!'
+        end
+        redirect_to admin_service_configs_path(@service)
       end
     end
   end

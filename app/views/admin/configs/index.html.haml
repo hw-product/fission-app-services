@@ -1,0 +1,22 @@
+:ruby
+  id = 'account-config'
+  content_for(:container) do
+    render(
+      :partial => 'layouts/panel',
+      :locals => {
+        :id => id,
+        :heading => "Service configurations (#{@service.name})",
+        :panel_content => render(
+          :partial => 'layouts/table',
+          :locals => {
+            :header_data => ['Service configuration items'],
+            :data => @configs.map{|config|
+              [link_to(config.name, edit_admin_service_config_path(@service.id, config.id))]
+            }
+          }
+        )
+      }
+    )
+  end
+
+= render(:partial => 'layouts/container', :locals => {:container_class => "#{id}-list", :container_id => id})

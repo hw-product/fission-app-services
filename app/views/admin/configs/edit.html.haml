@@ -1,0 +1,22 @@
+- content_for(:panel_content) do
+  = bootstrap_form_tag :url => admin_service_config_path(@config.service.id, @config.id), :method => :put, :html => {:id => 'service-config-form'} do |f|
+    = f.text_field :description, :value => @config.description
+    = f.select :format_helper, options_for_select([['','']] + ConfigCell.descendants.map{|v| [v,v]}, @config.format_helper)
+    = f.check_box :enabled, :checked => @config.enabled
+    = f.submit 'Save', :disable_with => 'Saving...', :class => 'btn btn-success pull-right'
+  .clearfix
+
+:ruby
+  id = 'account-config'
+  content_for(:container) do
+    render(
+      :partial => 'layouts/panel',
+      :locals => {
+        :id => id,
+        :heading => "Service Configuration: #{@config.service.name} - #{@config.name}",
+        :panel_content => yield(:panel_content)
+      }
+    )
+  end
+
+= render(:partial => 'layouts/container', :locals => {:container_id => 'service-config-editor'})
