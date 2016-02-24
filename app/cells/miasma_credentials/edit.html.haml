@@ -1,12 +1,33 @@
 .credentials
   .aws
-    = @form.text_field :aws_things
+    = @form.text_field :aws_sts_role_arn
+    = @form.text_field :aws_access_key_id
+    = @form.text_field :aws_secret_access_key
+    = @form.text_field :aws_region
   .azure
-    = @form.text_field :azure_things
+    = @form.text_field :azure_tenant_id
+    = @form.text_field :azure_client_id
+    = @form.text_field :azure_subscription_id
+    = @form.text_field :azure_client_secret
+    = @form.text_field :azure_region
+    = @form.text_field :azure_blob_account_name
+    = @form.text_field :azure_blob_secret_key
+    = @form.text_field :azure_root_orchestration_container
   .rackspace
-    = @form.text_field :rackspace_things
+    = @form.text_field :rackspace_username
+    = @form.text_field :rackspace_api_key
+    = @form.text_field :rackspace_region
   .open_stack
-    = @form.text_field :open_stack_things
+    = @form.text_field :open_stack_identity_url
+    = @form.text_field :open_stack_username
+    = @form.text_field :open_stack_user_id
+    = @form.text_field :open_stack_password
+    = @form.text_field :open_stack_token
+    = @form.text_field :open_stack_region
+    = @form.text_field :open_stack_tenant_name
+    = @form.text_field :open_stack_domain
+    = @form.text_field :open_stack_project
+= @form.hidden_field @name, :value => 'value', :class => 'credentials-holder'
 
 :javascript
   $(document).ready(function(){
@@ -19,5 +40,18 @@
       } else {
         $('.credentials').children().hide();
       }
+    });
+    $('.credentials').parents('form').submit(function(event){
+      event.stopPropagation();
+      enabled_items = $(this).find('.credentials').children('[style*="block"]').find('input');
+      data = $.map(enabled_items, function(item){
+        if($(item).val() != ''){
+          return '"' + $(item).attr('name') + '": "' + $(item).val() + '"';
+        }
+      });
+      data = '{' + data.join(', ') + '}';
+      $(this).find('.credentials-holder').val(data);
+      $(this).find('.credentials').detach();
+      return false;
     });
   });
