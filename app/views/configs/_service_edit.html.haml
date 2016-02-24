@@ -47,7 +47,7 @@
     $.post('#{apply_service_configs_path}', {
       service: '#{service.name}',
       data: current_data,
-      modified_services: gather_modified()
+      modified_services: fission_services.gather_modified()
     });
     return false;
   });

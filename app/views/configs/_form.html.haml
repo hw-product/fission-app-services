@@ -12,94 +12,10 @@
 
 
 :javascript
+  fission_services.data['config_id'] = #{@config.try(:id) || 'null'};
+  fission_services.data['apply_service_configs_path'] = '#{apply_service_configs_path}';
+  fission_services.data['edit_service_configs_path'] = '#{edit_service_configs_path}';
+  fission_services.data['list_services_configs_path'] = '#{list_services_configs_path}';
 
-  function gather_configs(){
-    current_data = {};
-    $('.config-item-data textarea').each(function(){
-      current_data[$(this).attr('name')] = $(this).val();
-    });
-    return current_data;
-  }
-
-  function gather_modified(){
-    current_modified = []
-    $('.config-item-data.modified').each(function(){
-      current_modified.push($(this).parents('.config-item').attr('data-service-name'));
-    });
-    return current_modified;
-  }
-
-  function apply_configs(srv_name){
-    $.post('#{apply_service_configs_path}', {
-      data: gather_configs(),
-      service: srv_name,
-      modified_services: gather_modified(),
-      success: function(){
-        if(srv_name){
-          setTimeout(function(){
-            $('#service-config-' + srv_name).trigger('click');
-          }, 1500);
-        }
-      }
-    });
-  }
-
-  function delete_service_config(elm){
-    root = elm.parents('.config-item');
-    root.find('.config-item-data').remove();
-    sparkle_ui.display.highlight(root.attr('id'), 'danger');
-    setTimeout(function(){
-      root.toggle('fade');
-      apply_configs();
-      window_rails.loading.close();
-    }, 1000);
-  }
-
-  function config_form_setup(){
-    $('.edit-control').click(function(){
-      current_data = {};
-      $(this).parents('.config-item').find('.config-item-data textarea').each(function(){
-        current_data[$(this).attr('name')] = $(this).val();
-      });
-      $.post('#{edit_service_configs_path}', {
-        config: #{@config.try(:id) || 'null'},
-        service: $(this).parents('.config-item').attr('data-service-name'),
-        data: current_data
-      });
-      return false;
-    });
-
-    $('#service-config-adder').click(function(){
-      $.post('#{list_services_configs_path}', {
-        data: gather_configs()
-      });
-      return false;
-    });
-
-    $('.config-item-delete').click(function(){
-      window_rails.confirm.open({
-        content: 'Delete service configuration item',
-        callback: 'delete_service_config',
-        title: 'Service Configuration Removal',
-        element: $(this)
-      });
-      return false;
-    });
-
-    $('.service-config-panel.config-item').click(function(){
-      current_data = {};
-      $(this).find('.config-item-data textarea').each(function(){
-        current_data[$(this).attr('name')] = $(this).val();
-      });
-      $.post('#{edit_service_configs_path}', {
-        config: #{@config.try(:id) || 'null'},
-        service: $(this).attr('data-service-name'),
-        data: current_data
-      });
-      return false;
-    });
-
-  }
-
-  $(document).ready(config_form_setup);
-  $(document).on('page:load', config_form_setup);
+  $(document).ready(fission_services.config_form_setup);
+  $(document).on('page:load', fission_services.config_form_setup);

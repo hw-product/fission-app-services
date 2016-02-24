@@ -17,5 +17,5 @@
   $('.service-config-adder-panel').click(function(){
     window_rails.loading.open();
     window_rails.close_window('service_add');
-    apply_configs($(this).attr('data-service-name'));
+    fission_services.apply_configs($(this).attr('data-service-name'));
   });

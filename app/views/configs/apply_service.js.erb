@@ -3,7 +3,7 @@ content = render(:partial => 'service_config_collection', :locals => {:config_da
 %>
 $('.service-config-collection').html('<%= escape_javascript(content) %>');
 <%= close_window('service_edit') %>
-config_form_setup();
+fission_services.config_form_setup();
 $('.config-item-data.modified').each(function(){
   ctn = $(this).parents('.config-item');
   ctn.removeClass('panel-info');
