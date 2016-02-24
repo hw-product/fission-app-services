@@ -10,6 +10,7 @@
           :partial => 'layouts/table',
           :locals => {
             :header_data => ['Service configuration items'],
+            :table_id => 'service-config-items',
             :data => @configs.map{|config|
               [link_to(config.name, edit_admin_service_config_path(@service.id, config.id))]
             }
@@ -20,3 +21,16 @@
   end
 
 = render(:partial => 'layouts/container', :locals => {:container_class => "#{id}-list", :container_id => id})
+
+:javascript
+  $('tbody').sortable({
+    update: function(event, ui){
+      items = $.map($('tbody a'), function(item){
+        return $(item).text();
+      });
+      $.post('#{sort_admin_service_configs_path(@service)}',
+        {item_order: items},
+        function(){ sparkle_ui.display.highlight('service-config-items'); }
+      );
+    }
+  });

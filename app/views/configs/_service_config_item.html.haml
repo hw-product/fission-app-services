@@ -7,7 +7,7 @@
       .col-md-8
         .colorize.text-info
           %center
-            .fa.fa-4x.service-config-icon{:class => "fa-#{srv.icon || 'cog'}"}
+            .fa.fa-4x.service-config-icon{:class => "fa-#{srv.icon.present? ? srv.icon : 'cog'}"}
           %center
             = srv.display_name.humanize
       .col-md-2

@@ -13,7 +13,11 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :services, :only => [:index, :edit, :update] do
-      resources :configs, :only => [:index, :edit, :update]
+      resources :configs, :only => [:index, :edit, :update] do
+        collection do
+          post :sort
+        end
+      end
     end
     resources :service_groups do
       collection do

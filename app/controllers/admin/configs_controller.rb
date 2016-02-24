@@ -15,7 +15,7 @@ class Admin::ConfigsController < ApplicationController
         javascript_redirect_to dashboard_path
       end
       format.html do
-        @configs = @service.service_config_items_dataset.order(:name).all
+        @configs = @service.service_config_items_dataset.order(:position, :name).all
       end
     end
   end
@@ -53,6 +53,24 @@ class Admin::ConfigsController < ApplicationController
         else
           flash[:error] = 'Failed to locate requested configuration item!'
         end
+        redirect_to admin_service_configs_path(@service)
+      end
+    end
+  end
+
+  def sort
+    respond_to do |format|
+      format.js do
+        ordering = params.fetch(:item_order, [])
+        @service.service_config_items.each do |config_item|
+          idx = ordering.index(config_item.name) || 0
+          config_item.position = idx
+          config_item.save
+        end
+        render :nothing => true
+      end
+      format.html do
+        flash[:error] = 'Unsupported request!'
         redirect_to admin_service_configs_path(@service)
       end
     end

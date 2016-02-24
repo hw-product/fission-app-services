@@ -1,6 +1,6 @@
 .config-editor
   = bootstrap_form_tag :html => {:id => "service-config-#{service.id}-form"} do |f|
-    - service.service_config_items_dataset.where(:enabled => true).order(:name).each do |sci|
+    - service.service_config_items_dataset.where(:enabled => true).order(:position, :name).each do |sci|
       - value = config.get(service.name, *sci.name.split('__'))
       :ruby
         if(value.present?)
@@ -36,6 +36,9 @@
       current_data[$(this).attr('name')] = $(this).val();
     });
     $(this).parents('.config-editor').find('input:text').each(function(){
+      current_data[$(this).attr('name')] = $(this).val();
+    });
+    $(this).parents('.config-editor').find('input:hidden').each(function(){
       current_data[$(this).attr('name')] = $(this).val();
     });
     $(this).parents('.config-editor').find('textarea').each(function(){
