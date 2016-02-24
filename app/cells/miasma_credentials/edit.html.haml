@@ -32,8 +32,6 @@
 :javascript
   $(document).ready(function(){
     $('.credentials').parents('form').on('miasma-provider', function(event, val){
-      console.log(event);
-      console.log(val);
       if(val && val != ''){
         $('.credentials').children().hide();
         $('.credentials .' + val).show();
