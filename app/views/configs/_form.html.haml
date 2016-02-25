@@ -16,6 +16,9 @@
   fission_services.data['apply_service_configs_path'] = '#{apply_service_configs_path}';
   fission_services.data['edit_service_configs_path'] = '#{edit_service_configs_path}';
   fission_services.data['list_services_configs_path'] = '#{list_services_configs_path}';
+  fission_services.data['auto_add'] = #{params.fetch(:auto_add, []).inspect}.filter(function(elm){
+    return $('[data-service-name="' + elm + '"]').size == 0;
+  });
 
   $(document).ready(fission_services.config_form_setup);
   $(document).on('page:load', fission_services.config_form_setup);
