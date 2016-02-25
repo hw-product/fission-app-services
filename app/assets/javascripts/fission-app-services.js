@@ -66,7 +66,7 @@ fission_services.config_form_setup = function(){
   $('.config-item-delete').click(function(){
     window_rails.confirm.open({
       content: 'Delete service configuration item',
-      callback: 'delete_service_config',
+      callback: 'fission_services.delete_service_config',
       title: 'Service Configuration Removal',
       element: $(this)
     });
@@ -86,4 +86,10 @@ fission_services.config_form_setup = function(){
     return false;
   });
 
+  if(fission_services.data['auto_add'] && fission_services.data['auto_add'].length > 0 && !fission_services.paused_adder){
+    fission_services.paused_adder = true;
+    setTimeout(function(){ fission_services.paused_adder = false; }, 500);
+    initial = fission_services.data['auto_add'].shift();
+    fission_services.apply_configs(initial);
+  }
 }
