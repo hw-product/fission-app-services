@@ -1,0 +1,40 @@
+%fieldset.environment-variablerator
+  %legend
+    Environment Variables
+  - if @value
+    - MultiJson.load(@value).each_pair do |key, value|
+      .form-inline.environment-variable
+        = @form.text_field :env_key, :placeholder => 'KEY', :hide_label => true, :value => key
+        = @form.text_field :env_value, :placeholder => 'VALUE', :hide_label => true, :value => value
+  .form-inline.environment-variable
+    = @form.text_field :env_key, :placeholder => 'KEY', :hide_label => true
+    = @form.text_field :env_value, :placeholder => 'VALUE', :hide_label => true
+
+  #environment-controls
+    %a.add-environment-variable
+      %span.glyphicon.glyphicon-plus.btn.btn-xs.btn-success
+= @form.hidden_field @name, :value => @value, :class => 'env-holder'
+%br
+
+:javascript
+  $(document).ready(function(){
+    $('a.add-environment-variable').click(function(){
+      cloner = $('.form-inline.environment-variable').first().clone();
+      cloner.find('input').val('');
+      $('#environment-controls').before(cloner);
+    });
+    $('.environment-variablerator').parents('form').submit(function(event){
+      event.stopPropagation();
+      env_vars = $(this).find('.form-inline.environment-variable')
+      data = $.map(env_vars, function(base){
+        item = $(base).find('input');
+        key = $(item)[0];
+        value = $(item)[1];
+        return '"' + $(key).val() + '": "' +  $(value).val() + '"'
+      });
+      data = '{' + data.join(', ') + '}';
+      $(this).find('.env-holder').val(data);
+      //$(this).find('.environment-variablerator').detach();
+      return false;
+    });
+  });
