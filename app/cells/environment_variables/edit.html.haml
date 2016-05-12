@@ -28,13 +28,15 @@
       env_vars = $(this).find('.form-inline.environment-variable')
       data = $.map(env_vars, function(base){
         item = $(base).find('input');
-        key = $(item)[0];
-        value = $(item)[1];
-        return '"' + $(key).val() + '": "' +  $(value).val() + '"'
+        key = $($(item)[0]).val();
+        value = $($(item)[1]).val();
+        if(key != '' && value != ''){
+          return '"' + key + '": "' + value + '"'
+        }
       });
       data = '{' + data.join(', ') + '}';
       $(this).find('.env-holder').val(data);
-      //$(this).find('.environment-variablerator').detach();
+      $(this).find('.environment-variablerator').detach();
       return false;
     });
   });
