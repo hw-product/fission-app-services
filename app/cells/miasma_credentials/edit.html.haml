@@ -1,6 +1,8 @@
 - local = @value ? MultiJson.load(@value).to_smash : {}
 .credentials
   .aws
+    - if u_arn = Rails.application.config.settings.get(:fission, :providers, :aws, :backend_user_arn)
+      = @form.text_field :system_aws_user_arn, :value => u_arn, :readonly => true, :label => 'System AWS user ARN (for assuming roles)'
     = @form.text_field :aws_sts_role_arn, :value => local[:aws_sts_role_arn]
     = @form.text_field :aws_access_key_id, :value => local[:aws_access_key_id]
     = @form.text_field :aws_secret_access_key, :value => local[:aws_secret_access_key]
