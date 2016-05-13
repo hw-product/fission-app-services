@@ -47,7 +47,7 @@
       event.stopPropagation();
       enabled_items = $(this).find('.credentials').children('[style*="block"]').find('input');
       data = $.map(enabled_items, function(item){
-        if($(item).val() != ''){
+        if($(item).val() != '' && $(item).attr('name') != 'system_aws_user_arn'){
           return '"' + $(item).attr('name') + '": "' + $(item).val() + '"';
         }
       });
