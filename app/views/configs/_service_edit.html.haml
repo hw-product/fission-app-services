@@ -47,6 +47,9 @@
     $(this).parents('.config-editor').find('input:checkbox:checked').each(function(){
       current_data[$(this).attr('name')] = $(this).val();
     });
+    $(this).parents('.config-editor').find('select').each(function(){
+      current_data[$(this).attr('name')] = $(this).val();
+    });
     $.post('#{apply_service_configs_path}', {
       service: '#{service.name}',
       data: current_data,
