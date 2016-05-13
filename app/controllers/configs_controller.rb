@@ -146,13 +146,13 @@ class ConfigsController < ApplicationController
     respond_to do |format|
       format.js do
         populate_services!
-        @config = assign_config(@services, params[:data])
+        @config = assign_config(@services, params[:data]).to_smash
         @service = @services.detect{|s| s.name == params[:service]}
         if(@service && !@config.has_key?(@service.name))
           @config[@service.name] = Smash.new
         end
         [params[:modified_services], @service.try(:name)].flatten.compact.uniq.each do |k|
-          @config[k]['__is_modified__'] = true
+          @config.set(k, '__is_modified__', true)
         end
         @defined_services = @services.find_all do |srv|
           @config.keys.include?(srv.name)
