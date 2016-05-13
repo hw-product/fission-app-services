@@ -1,33 +1,35 @@
+- local = @value ? MultiJson.load(@value).to_smash : {}
 .credentials
   .aws
-    = @form.text_field :aws_sts_role_arn
-    = @form.text_field :aws_access_key_id
-    = @form.text_field :aws_secret_access_key
-    = @form.text_field :aws_region
+    = @form.text_field :aws_sts_role_arn, :value => local[:aws_sts_role_arn]
+    = @form.text_field :aws_access_key_id, :value => local[:aws_access_key_id]
+    = @form.text_field :aws_secret_access_key, :value => local[:aws_secret_access_key]
+    = @form.text_field :aws_region, :value => local[:aws_region]
+    = @form.text_field :aws_bucket_region, :value => local[:aws_bucket_region]
   .azure
-    = @form.text_field :azure_tenant_id
-    = @form.text_field :azure_client_id
-    = @form.text_field :azure_subscription_id
-    = @form.text_field :azure_client_secret
-    = @form.text_field :azure_region
-    = @form.text_field :azure_blob_account_name
-    = @form.text_field :azure_blob_secret_key
-    = @form.text_field :azure_root_orchestration_container
+    = @form.text_field :azure_tenant_id, :value => local[:azure_tenant_id]
+    = @form.text_field :azure_client_id, :value => local[:azure_client_id]
+    = @form.text_field :azure_subscription_id, :value => local[:azure_subscription_id]
+    = @form.text_field :azure_client_secret, :value => local[:azure_client_secret]
+    = @form.text_field :azure_region, :value => local[:azure_region]
+    = @form.text_field :azure_blob_account_name, :value => local[:azure_blob_account_name]
+    = @form.text_field :azure_blob_secret_key, :value => local[:azure_blob_secret_key]
+    = @form.text_field :azure_root_orchestration_container, :value => local[:azure_root_orchestration_container]
   .rackspace
-    = @form.text_field :rackspace_username
-    = @form.text_field :rackspace_api_key
-    = @form.text_field :rackspace_region
+    = @form.text_field :rackspace_username, :value => local[:rackspace_username]
+    = @form.text_field :rackspace_api_key, :value => local[:rackspace_api_key]
+    = @form.text_field :rackspace_region, :value => local[:rackspace_region]
   .open_stack
-    = @form.text_field :open_stack_identity_url
-    = @form.text_field :open_stack_username
-    = @form.text_field :open_stack_user_id
-    = @form.text_field :open_stack_password
-    = @form.text_field :open_stack_token
-    = @form.text_field :open_stack_region
-    = @form.text_field :open_stack_tenant_name
-    = @form.text_field :open_stack_domain
-    = @form.text_field :open_stack_project
-= @form.hidden_field @name, :value => 'value', :class => 'credentials-holder'
+    = @form.text_field :open_stack_identity_url, :value => local[:open_stack_identity_url]
+    = @form.text_field :open_stack_username, :value => local[:open_stack_username]
+    = @form.text_field :open_stack_user_id, :value => local[:open_stack_user_id]
+    = @form.text_field :open_stack_password, :value => local[:open_stack_password]
+    = @form.text_field :open_stack_token, :value => local[:open_stack_token]
+    = @form.text_field :open_stack_region, :value => local[:open_stack_region]
+    = @form.text_field :open_stack_tenant_name, :value => local[:open_stack_tenant_name]
+    = @form.text_field :open_stack_domain, :value => local[:open_stack_domain]
+    = @form.text_field :open_stack_project, :value => local[:open_stack_project]
+= @form.hidden_field @name, :value => @value, :class => 'credentials-holder'
 
 :javascript
   $(document).ready(function(){
@@ -49,6 +51,7 @@
       });
       data = '{' + data.join(', ') + '}';
       $(this).find('.credentials-holder').val(data);
+      $(this).find('.credentials').detach();
       return false;
     });
   });
